@@ -1,0 +1,36 @@
+# got this from chatgpt, so it's probably not perfect :)
+
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "80:80"
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - DB_HOST=postgres
+      - DB_NAME=gpx-data
+      - DB_USER=user
+      - DB_PASSWORD=password
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=gpx-data
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
