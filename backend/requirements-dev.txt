@@ -1,2 +1,4 @@
+# to install: pip install -r requirements-dev.txt
+
 -r requirements.txt
-black==23.3.0 # formatting
+black==23.3.0           # formatting

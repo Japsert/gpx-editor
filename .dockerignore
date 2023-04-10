@@ -1,0 +1,14 @@
+# general
+.venv
+.git
+.gitignore
+.env
+
+# frontend
+node_modules
+.next
+
+# backend
+__pycache__
+*.pyc
+

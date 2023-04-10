@@ -83,11 +83,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gpx-data",
-        "USER": "user",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "",  # default: 5432
+        "NAME": 'postgres',
+        "USER": 'postgres',
+        "PASSWORD": 'postgres',
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
