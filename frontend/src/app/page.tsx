@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -19,11 +20,11 @@ export default function HomePage() {
     event.preventDefault();
     setRequestSent(true);
     const url = "/api/hello";
-    const input = (inputValue ? inputValue : "hello world!") as string;
+    const input = JSON.stringify(inputValue ? inputValue : "hello world!");
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: input }),
+      body: input,
     });
     const text = await response.text();
     setApiResponse([...ApiResponse, text]);
