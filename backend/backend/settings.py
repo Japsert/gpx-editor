@@ -25,7 +25,8 @@ SECRET_KEY = "django-insecure-3)a2xl#^=otm&+*s!uv$jp9ukbeteo-t7od%(4p_(3*g&l@8+3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# add frontend url to allowed hosts
+ALLOWED_HOSTS = ["localhost", "backend"]
 
 
 # Application definition
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -83,8 +85,8 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'postgres',
-        "USER": 'postgres',
+        "NAME": 'gpx-data',
+        "USER": 'jasper',
         "PASSWORD": 'postgres',
         "HOST": "db",
         "PORT": 5432,

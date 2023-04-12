@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   frontend:
+    container_name: frontend
     build:
       context: frontend
       dockerfile: Dockerfile
@@ -16,6 +17,7 @@ services:
       - NODE_ENV=development
 
   backend:
+    container_name: backend
     build:
       context: backend
       dockerfile: Dockerfile
@@ -30,9 +32,10 @@ services:
       - db
 
   db:
+    container_name: db
     image: postgres:alpine
-    environment: # these are the values with which the database is initialized
-      - POSTGRES_DB=gpx-editor
+    environment:
+      - POSTGRES_DB=gpx-data
       - POSTGRES_USER=jasper
       - POSTGRES_PASSWORD=postgres
       #- "POSTGRES_HOST_AUTH_METHOD=trust"
