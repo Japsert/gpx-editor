@@ -2,28 +2,30 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { Map } from "mapbox-gl";
+//import "mapbox-gl/dist/mapbox-gl.css"; // for some reason the map won't display with this
+import "./Map.module.css";
 
-const accessToken = process.env.MAPBOX_ACCESS_TOKEN;
+let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 if (!accessToken) {
   throw new Error("No access token for Mapbox");
 }
 mapboxgl.accessToken = accessToken;
 
 export default function MapComponent() {
-  const mapContainer = useRef(null as unknown as HTMLDivElement);
-  const map = useRef(null as unknown as Map);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
-  
+  const mapContainer = useRef(null);
+  const map = useRef(null as Map | null);
+  const [lat, setLat] = useState(53.21);
+  const [lng, setLng] = useState(6.57);
+  const [zoom, setZoom] = useState(11);
+
   useEffect(() => {
-    console.log(mapboxgl.accessToken);
     if (map.current) return; // initialize map only once
+    if (!mapContainer.current) return; // typescript
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: "mapbox://styles/mapbox/streets-v12",
       center: [lng, lat],
-      zoom: zoom
+      zoom: zoom,
     });
   });
 

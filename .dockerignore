@@ -2,7 +2,7 @@
 .venv
 .git
 .gitignore
-.env
+.dockerignore
 
 # frontend
 node_modules
