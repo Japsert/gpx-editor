@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import "./styles.css"
 
 export default function HomePage() {
   const [ApiResponse, setApiResponse] = useState([] as string[]);

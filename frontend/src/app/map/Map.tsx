@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import { Map } from "mapbox-gl";
-//import "mapbox-gl/dist/mapbox-gl.css"; // for some reason the map won't display with this
-import "./Map.module.css";
+import mapboxgl, { Map } from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css"; // for some reason the map won't display with this
+import styles from "./Map.module.css";
 
 let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 if (!accessToken) {
@@ -14,8 +13,8 @@ mapboxgl.accessToken = accessToken;
 export default function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null as Map | null);
-  const [lat, setLat] = useState(53.21);
   const [lng, setLng] = useState(6.57);
+  const [lat, setLat] = useState(53.21);
   const [zoom, setZoom] = useState(11);
 
   useEffect(() => {
@@ -29,9 +28,21 @@ export default function MapComponent() {
     });
   });
 
+  useEffect(() => {
+    if (!map.current) return; // wait for map to initialize
+    map.current.on("move", () => {
+      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
+      setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
+      setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
+    });
+  });
+
   return (
     <>
-      <div ref={mapContainer} className="map-container" />
+      <div className={styles.sidebar}>
+        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+      </div>
+      <div ref={mapContainer} className={styles.mapContainer} />
     </>
   );
 }
