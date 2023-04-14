@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css"; // for some reason the map won't display with this
-import styles from "./Map.module.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+import Link from "next/link";
 
 let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 if (!accessToken) {
@@ -31,18 +31,18 @@ export default function MapComponent() {
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
     map.current.on("move", () => {
-      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
-      setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
+      setLng(parseFloat(map.current!.getCenter().lng.toFixed(2)));
+      setLat(parseFloat(map.current!.getCenter().lat.toFixed(2)));
       setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
     });
   });
 
   return (
     <>
-      <div className={styles.sidebar}>
-        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+      <div className="absolute z-10 top-0 left-0 m-3 rounded-md font-mono text-base bg-sky-950 bg-opacity-75 text-white px-3 py-1">
+        <Link href="/" className="link">&lt; Back to home</Link> | Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
-      <div ref={mapContainer} className={styles.mapContainer} />
+      <div ref={mapContainer} className="absolute top-0 left-0 w-full h-full" />
     </>
   );
 }

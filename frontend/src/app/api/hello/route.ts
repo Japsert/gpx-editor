@@ -1,27 +1,33 @@
-export async function GET(request: Request) {
-  const response = await fetch("http://backend:8000/api/hello", {
-    method: "GET",
-    headers: request.headers,
-  });
-  const data = await response.text();
-  return new Response(data);
+import axios from "axios";
+import { debug } from "console";
+import { NextRequest, NextResponse } from "next/server";
+
+const helloApiUrl = "http://backend:8000/api/hello";
+
+export async function GET() {
+  try {
+    const res = await axios.get(helloApiUrl);
+    return NextResponse.json(res.data);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-export async function POST(request: Request) {
-  const response = await fetch("http://backend:8000/api/hello", {
-    method: "POST",
-    headers: request.headers,
-    body: request.body,
-  });
-  const data = await response.text();
-  return new Response(data);
+export async function POST(request: NextRequest) {
+  const data = await request.json();
+  try {
+    const res = await axios.post(helloApiUrl, data);
+    return NextResponse.json(res.data);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-export async function DELETE(request: Request) {
-  const response = await fetch("http://backend:8000/api/hello", {
-    method: "DELETE",
-    headers: request.headers,
-  });
-  const data = await response.text();
-  return new Response(data);
+export async function DELETE() {
+  try {
+    const res = await axios.delete(helloApiUrl);
+    return NextResponse.json(res.data);
+  } catch (err) {
+    console.error(err);
+  }
 }
