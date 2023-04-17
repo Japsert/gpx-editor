@@ -1,4 +1,5 @@
 import "../styles/global.css";
+import MapHeader from "./map/MapHeader";
 
 export default function RootLayout({
   children,
@@ -7,7 +8,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <MapHeader />
+        {children}
+      </body>
     </html>
   );
 }
