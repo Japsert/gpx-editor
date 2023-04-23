@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 
 export default function MapPage() {
   return (
-    <div className="flex grow min-h-0">
+    <div className="map-content flex grow min-h-0">
       {/* Map component */}
       <div className="mapboxgl-map">
       </div>

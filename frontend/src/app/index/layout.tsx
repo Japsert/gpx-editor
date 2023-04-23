@@ -1,0 +1,14 @@
+import SiteHeader from "../SiteHeader";
+
+export default function IndexLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <SiteHeader />
+      {children}
+    </div>
+  )
+}

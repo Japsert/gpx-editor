@@ -51,7 +51,7 @@ export default function ApiTestPage() {
   }
 
   return (
-    <>
+    <div className="text-content">
       <h1>API test</h1>
 
       <h2>Getting the first row</h2>
@@ -96,6 +96,6 @@ export default function ApiTestPage() {
           <li key={index}>{item}</li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }

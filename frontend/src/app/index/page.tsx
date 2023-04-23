@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-export default function HomePage() {
+export default function IndexPage() {
   return (
-    <div>
+    <div className="text-content">
       <h1>Index</h1>
       
-      <p>Choose one of the following subpages:</p>
+      <p>Choose one of the following pages:</p>
 
       <ul>
         <li>

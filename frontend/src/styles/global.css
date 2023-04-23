@@ -36,7 +36,10 @@
   .header {
     @apply border-b border-gray-200 bg-slate-100;
   }
-  .content {
+  .text-content {
     @apply mx-8;
+  }
+  .map-content {
+    /*@apply ;*/
   }
 }

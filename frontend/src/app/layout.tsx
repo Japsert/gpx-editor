@@ -1,9 +1,10 @@
 import "../styles/global.css";
-import SiteHeader from "./SiteHeader";
 
+// inter as font
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
+// needed for typescript
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
@@ -16,8 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SiteHeader />
-        <div className="content">{children}</div>
+        <div>{children}</div>
       </body>
     </html>
   );
