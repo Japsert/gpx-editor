@@ -1,6 +1,23 @@
 export default function Sidebar() {
+  
+  function loadFromFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files![0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const contents = e.target?.result;
+      console.log(contents);
+    };
+    reader.readAsText(file);
+  }
+  
   return (
     <>
+      <span className="sidebar-header">Load from file</span>
+      <input title="Load from File" type="file" accept=".gpx" onChange={loadFromFile} />
+      
       <p>
         This is a simple, responsive layout template for web mapping projects.
         It can save you some time scaffolding your project so you can focus on
