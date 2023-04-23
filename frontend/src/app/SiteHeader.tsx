@@ -7,8 +7,8 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 export default function SiteHeader() {
   return (
-    <header className="header px-8">
-      <nav className="flex justify-center items-center relative h-16">
+    <header className="border-b border-gray-200 bg-slate-100">
+      <nav className="flex justify-center items-center relative h-16 mx-8">
         {/* Main logo and title */}
         <div className="absolute">
           <Link href="/" className="flex gap-2">

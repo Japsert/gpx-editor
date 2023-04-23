@@ -33,13 +33,7 @@
   .btn-red {
     @apply bg-red-600 hover:bg-red-700 active:bg-red-800;
   }
-  .header {
-    @apply border-b border-gray-200 bg-slate-100;
-  }
   .text-content {
     @apply mx-8;
-  }
-  .map-content {
-    /*@apply ;*/
   }
 }

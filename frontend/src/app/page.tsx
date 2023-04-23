@@ -1,0 +1,32 @@
+import Link from "next/link";
+import SiteHeader from "./SiteHeader";
+
+export default function IndexPage() {
+  return (
+    <>
+      <SiteHeader />
+      <div className="text-content">
+        <h1>Index</h1>
+      
+        <p>Choose one of the following pages:</p>
+        <ul>
+          <li>
+              <Link href="/map" className="link">
+                /map
+              </Link>
+          </li>
+          <li>
+              <Link href="/apitest" className="link">
+                /apitest
+              </Link>
+          </li>
+          <li>
+              <Link href="/csstest" className="link">
+                /csstest
+              </Link>
+          </li>
+        </ul>
+      </div>
+    </>
+  );
+}

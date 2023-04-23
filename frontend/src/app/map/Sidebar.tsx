@@ -1,6 +1,6 @@
 export default function Sidebar() {
   return (
-    <div>
+    <>
       <p>
         This is a simple, responsive layout template for web mapping projects.
         It can save you some time scaffolding your project so you can focus on
@@ -31,15 +31,6 @@ export default function Sidebar() {
         placerat felis. Sed sed congue purus. Sed hendrerit tortor augue, vitae
         pellentesque ex ornare molestie.
       </p>
-      <p>
-        Vestibulum ultricies urna nec maximus facilisis. Morbi ut suscipit
-        augue, non suscipit felis. Etiam aliquam molestie auctor. Class aptent
-        taciti sociosqu ad litora torquent per conubia nostra, per inceptos
-        himenaeos. Proin ac cursus neque, in semper ante. Nullam purus velit,
-        vestibulum quis dictum ac, elementum dapibus metus. Integer feugiat
-        luctus quam in auctor. Etiam eu laoreet tortor. Vivamus sit amet finibus
-        elit. Suspendisse vel varius dolor, ac egestas mauris.
-      </p>
-    </div>
+    </>
   );
 }

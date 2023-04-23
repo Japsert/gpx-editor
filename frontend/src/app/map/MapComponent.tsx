@@ -25,23 +25,34 @@ export default function MapComponent() {
       center: [lng, lat],
       zoom: zoom,
     });
+    
+    map.current.addControl(new mapboxgl.NavigationControl());
+    
+    map.current.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      })
+    );
   });
 
-  useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-    map.current.on("move", () => {
-      setLng(parseFloat(map.current!.getCenter().lng.toFixed(2)));
-      setLat(parseFloat(map.current!.getCenter().lat.toFixed(2)));
-      setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
-    });
-  });
+  //useEffect(() => {
+  //  if (!map.current) return; // wait for map to initialize
+  //  map.current.on("move", () => {
+  //    setLng(parseFloat(map.current!.getCenter().lng.toFixed(2)));
+  //    setLat(parseFloat(map.current!.getCenter().lat.toFixed(2)));
+  //    setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
+  //  });
+  //});
 
   return (
-    <div>
+    <div className="w-full h-full">
       <div className="relative z-10 top-0 left-0 m-3 rounded-md font-mono text-base bg-sky-950 bg-opacity-75 text-white px-3 py-1">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
-      <div ref={mapContainer} className="relative w-full h-full" />
+      <div ref={mapContainer} className="h-full" />
     </div>
   );
 }
