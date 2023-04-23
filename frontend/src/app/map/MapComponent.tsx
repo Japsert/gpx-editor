@@ -37,11 +37,11 @@ export default function MapComponent() {
   });
 
   return (
-    <>
-      <div className="absolute z-10 top-0 left-0 m-3 rounded-md font-mono text-base bg-sky-950 bg-opacity-75 text-white px-3 py-1">
+    <div>
+      <div className="relative z-10 top-0 left-0 m-3 rounded-md font-mono text-base bg-sky-950 bg-opacity-75 text-white px-3 py-1">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
-      <div ref={mapContainer} className="absolute top-0 left-0 w-full h-full" />
-    </>
+      <div ref={mapContainer} className="relative w-full h-full" />
+    </div>
   );
 }

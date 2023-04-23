@@ -1,22 +1,16 @@
-export default function MapComponent() {
+import MapComponent from "./MapComponent";
+import Sidebar from "./Sidebar";
+
+export default function MapPage() {
   return (
-    <div>
-      <header className="bg-gray-900">
-        <nav className="flex items-center justify-between h-16">
-          <div className="logo text-white text-lg font-semibold ml-6">Logo</div>
-          <div className="account text-white mr-6">Account Name</div>
-        </nav>
-      </header>
-      <div className="flex flex-col h-screen">
-        <div className="flex-1 flex">
-          <div className="w-2/3">
-            <MapComponent />
-          </div>
-          <div className="w-1/3 p-4">
-            <h2 className="text-xl font-medium mb-4">Settings</h2>
-            <p className="text-gray-700">Placeholder for settings pane</p>
-          </div>
-        </div>
+    <div className="flex grow min-h-0">
+      {/* Map component */}
+      <div className="mapboxgl-map">
+      </div>
+
+      {/* Sidebar */}
+      <div className="w-96 m-4 overflow-y-scroll">
+        <Sidebar />
       </div>
     </div>
   );

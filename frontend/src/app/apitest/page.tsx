@@ -52,10 +52,6 @@ export default function ApiTestPage() {
 
   return (
     <>
-      <Link href="/" className="link text-gray-700">
-        &lt; Home
-      </Link>
-      
       <h1>API test</h1>
 
       <h2>Getting the first row</h2>
