@@ -50,12 +50,12 @@ export default function ApiTestPage() {
   }
 
   return (
-    <div className="text-content">
+    <main className="text-content">
       <h1>API test</h1>
 
       <h2>Getting the first row</h2>
 
-      <button onClick={getFirstRow} className="btn">
+      <button onClick={getFirstRow} className="btn btn-primary">
         {requestSent ? "Sent request..." : "Get first row from database"}
       </button>
 
@@ -73,7 +73,7 @@ export default function ApiTestPage() {
               setInputValue(e.target.value);
             }}
           />
-          <button type="submit" className="btn bg-blue-600">
+          <button type="submit" className="btn btn-primary">
             {requestSent ? "Sent request..." : "Create row"}
           </button>
         </form>
@@ -81,7 +81,7 @@ export default function ApiTestPage() {
 
       <h2>Clearing the database</h2>
 
-      <button onClick={clearDatabase} className="btn-red">
+      <button onClick={clearDatabase} className="btn btn-red">
         {requestSent ? "Sent request..." : "Clear database"}
       </button>
 
@@ -95,6 +95,6 @@ export default function ApiTestPage() {
           <li key={index}>{item}</li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 }

@@ -3,7 +3,7 @@ import styles from "./csstest.module.css";
 
 export default function CssTestPage() {
   return (
-    <div className="text-content">
+    <main className="text-content">
       <h1>CSS test</h1>
 
       <p>All the below text is styled with the global css file.</p>
@@ -25,6 +25,6 @@ export default function CssTestPage() {
         This text is styled using Tailwind.{" "}
         <span className="text-gray-400 italic">(used in this project)</span>
       </p>
-    </div>
+    </main>
   );
 }

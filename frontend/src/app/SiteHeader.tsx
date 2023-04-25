@@ -7,7 +7,7 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 export default function SiteHeader() {
   return (
-    <header className="shadow">
+    <header className="shadow z-40">
       <nav className="flex justify-center items-center relative h-16 mx-8">
         {/* Main logo and title */}
         <div className="absolute">

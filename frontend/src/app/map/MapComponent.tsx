@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
@@ -10,8 +10,8 @@ if (!accessToken) {
 mapboxgl.accessToken = accessToken;
 
 export default function MapComponent() {
-  const mapContainer = useRef(null);
-  const map = useRef(null as Map | null);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
   const [lng, setLng] = useState(6.57);
   const [lat, setLat] = useState(53.21);
   const [zoom, setZoom] = useState(11);
@@ -37,17 +37,22 @@ export default function MapComponent() {
       })
     );
   });
-
+  
   //useEffect(() => {
-  //  if (!map.current) return; // wait for map to initialize
-  //  map.current.on("move", () => {
-  //    setLng(parseFloat(map.current!.getCenter().lng.toFixed(2)));
-  //    setLat(parseFloat(map.current!.getCenter().lat.toFixed(2)));
-  //    setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
-  //  });
-  //});
-
-  return (
-      <div ref={mapContainer} className="h-full" />
-  );
+  //  function handleResize() {
+  //    console.log("resizing map!");
+  //    if (!map.current) return;
+  //    map.current.resize();
+  //  }
+    
+  //  console.log("adding resize listener");
+  //  window.addEventListener("resize", handleResize);
+    
+  //  return () => {
+  //    console.log("removing resize listener");
+  //    window.removeEventListener("resize", handleResize);
+  //  };
+  //}, []);
+  
+  return <div ref={mapContainer} className="h-full" />;
 }
