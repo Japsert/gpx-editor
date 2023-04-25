@@ -3,6 +3,10 @@
 .git
 .gitignore
 .dockerignore
+.vscode
+*.log
+logs
+dist
 
 # frontend
 node_modules
@@ -11,4 +15,3 @@ node_modules
 # backend
 __pycache__
 *.pyc
-
