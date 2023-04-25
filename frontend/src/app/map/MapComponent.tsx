@@ -17,8 +17,10 @@ export default function MapComponent() {
   const [zoom, setZoom] = useState(11);
 
   useEffect(() => {
+    // Initialize map
+
     if (map.current) return; // initialize map only once
-    if (!mapContainer.current) return; // typescript
+    if (!mapContainer.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v12",
@@ -36,23 +38,22 @@ export default function MapComponent() {
         trackUserLocation: true,
       })
     );
+
+    console.log("map initialized, adding resize observer");
+    // Create ResizeObserver and observe the map container
+    const observer = new ResizeObserver(() => {
+      if (map.current) {
+        setTimeout(() => map.current!.resize(), 0); // setTimeout fixes flickering
+      }
+    });
+    observer.observe(mapContainer.current);
+
+    // Clean up the observer when the component unmounts
+    return () => {
+      console.log("unmounting map");
+      //observer.unobserve(mapContainer.current!); // immediately gets run for some reason
+    };
   });
-  
-  //useEffect(() => {
-  //  function handleResize() {
-  //    console.log("resizing map!");
-  //    if (!map.current) return;
-  //    map.current.resize();
-  //  }
-    
-  //  console.log("adding resize listener");
-  //  window.addEventListener("resize", handleResize);
-    
-  //  return () => {
-  //    console.log("removing resize listener");
-  //    window.removeEventListener("resize", handleResize);
-  //  };
-  //}, []);
-  
+
   return <div ref={mapContainer} className="h-full" />;
 }
