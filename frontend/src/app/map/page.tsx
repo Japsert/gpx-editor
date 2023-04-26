@@ -9,14 +9,14 @@ export default function MapPage() {
   function toggleSidebar() {
     setSidebarOpen(!sidebarOpen);
   }
-  
+
   return (
     <main
       className={`${
         sidebarOpen ? "w-full" : "w-[calc(100%+24rem)]"
       } transition-all duration-500 h-full min-h-0`}
     >
-      <div className="flex h-full">
+      <div className="flex flex-col md:flex-row h-full">
         <div className="grow">
           <MapComponent />
         </div>

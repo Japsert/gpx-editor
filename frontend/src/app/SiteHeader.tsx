@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 export default function SiteHeader() {
@@ -13,12 +13,14 @@ export default function SiteHeader() {
         <div className="absolute">
           <Link href="/" className="flex gap-2">
             <Image src="/favicon.ico" alt="GPX Editor" width={32} height={32} />
-            <span className="text-2xl font-semibold hover:text-gray-700">GPX Editor</span>
+            <span className="text-2xl font-semibold hover:text-gray-700">
+              GPX Editor
+            </span>
           </Link>
         </div>
-        
+
         {/* Navigation links */}
-        <div className="absolute right-0 flex gap-6 items-center">
+        <div className="absolute right-0 gap-6 items-center hidden md:flex">
           <div className="">
             <Link href="/login" className="flex gap-2 items-center">
               <FontAwesomeIcon icon={faUser} />
@@ -37,6 +39,13 @@ export default function SiteHeader() {
               <span className="header-link">GitHub</span>
             </Link>
           </div>
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="absolute right-0 block md:hidden">
+          <button className="flex items-center justify-center w-10 h-10">
+            <FontAwesomeIcon icon={faBars} size="xl" />
+          </button>
         </div>
       </nav>
     </header>

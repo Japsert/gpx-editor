@@ -6,9 +6,9 @@
   h1 {
     @apply text-2xl font-semibold mt-8 mb-2;
   }
-  h2 {
+  /*h2 {
     @apply text-xl font-semibold mt-8 mb-2;
-  }
+  }*/
   p {
     @apply text-base leading-6 text-gray-800 my-2;
   }
@@ -17,6 +17,9 @@
   }
   input {
     @apply border-b-2 ml-4 mr-4;
+  }
+  a {
+    @apply link;
   }
 }
 

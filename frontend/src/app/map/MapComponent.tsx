@@ -39,7 +39,6 @@ export default function MapComponent() {
       })
     );
 
-    console.log("map initialized, adding resize observer");
     // Create ResizeObserver and observe the map container
     const observer = new ResizeObserver(() => {
       if (map.current) {
@@ -51,7 +50,7 @@ export default function MapComponent() {
     // Clean up the observer when the component unmounts
     return () => {
       console.log("unmounting map");
-      //observer.unobserve(mapContainer.current!); // immediately gets run for some reason
+      //observer.unobserve(mapContainer.current); // immediately gets run for some reason
     };
   });
 
