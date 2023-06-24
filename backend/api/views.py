@@ -25,6 +25,6 @@ class HelloView(APIView):
         return HttpResponse(f'Data (text: "{text}") saved to database')
 
     def delete(self, request):
-        # delete all rows from database table "hello"
+        # delete all rows from database table "Hello"
         Hello.objects.all().delete()
         return HttpResponse("Database cleared")

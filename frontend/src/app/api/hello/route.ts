@@ -1,5 +1,4 @@
 import axios from "axios";
-import { debug } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 const helloApiUrl = "http://backend:8000/api/hello";

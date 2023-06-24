@@ -10,14 +10,12 @@ export default function SiteHeader() {
     <header className="shadow z-40">
       <nav className="flex justify-center items-center relative h-16 mx-8">
         {/* Main logo and title */}
-        <div className="absolute">
-          <Link href="/" className="flex gap-2">
-            <Image src="/favicon.ico" alt="GPX Editor" width={32} height={32} />
-            <span className="text-2xl font-semibold hover:text-gray-700">
-              GPX Editor
-            </span>
-          </Link>
-        </div>
+        <Link href="/" className="flex gap-2">
+          <Image src="/favicon.ico" alt="GPX Editor" width={32} height={32} />
+          <span className="text-2xl font-semibold hover:text-gray-700">
+            GPX Editor
+          </span>
+        </Link>
 
         {/* Navigation links */}
         <div className="absolute right-0 gap-6 items-center hidden md:flex">

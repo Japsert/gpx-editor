@@ -18,9 +18,6 @@
   input {
     @apply border-b-2 ml-4 mr-4;
   }
-  a {
-    @apply link;
-  }
 }
 
 @layer components {
