@@ -1,14 +1,18 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SidebarContent from "./SidebarContent";
+
+interface SidebarProps {
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+  drawSampleData: () => void;
+}
 
 export default function Sidebar({
   sidebarOpen,
   toggleSidebar,
-}: {
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
-}) {
+  drawSampleData,
+}: SidebarProps) {
   function loadFromFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files![0];
     if (!file) {
@@ -24,7 +28,7 @@ export default function Sidebar({
 
   return (
     <div id="sidebar" className={`w-full h-1/2 md:w-96 md:h-full`}>
-      <SidebarContent />
+      <SidebarContent drawSampleData={drawSampleData} />
 
       {/* Collapse sidebar button */}
       <button

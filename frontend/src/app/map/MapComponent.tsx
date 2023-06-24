@@ -1,7 +1,6 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef, useState } from "react";
 
 let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 if (!accessToken) {
@@ -9,7 +8,11 @@ if (!accessToken) {
 }
 mapboxgl.accessToken = accessToken;
 
-export default function MapComponent() {
+interface MapComponentProps {
+  setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | undefined>>;
+}
+
+export default function MapComponent({ setMap }: MapComponentProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [lng, setLng] = useState(6.57);
@@ -27,6 +30,7 @@ export default function MapComponent() {
       center: [lng, lat],
       zoom: zoom,
     });
+    setMap(map.current);
 
     map.current.addControl(new mapboxgl.NavigationControl());
 
