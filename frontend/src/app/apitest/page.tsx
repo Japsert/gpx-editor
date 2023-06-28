@@ -55,7 +55,7 @@ export default function ApiTestPage() {
 
       <h2>Getting the first row</h2>
 
-      <button onClick={getFirstRow} className="btn btn-primary">
+      <button onClick={getFirstRow} className="btn-blue">
         {requestSent ? "Sent request..." : "Get first row from database"}
       </button>
 
@@ -73,7 +73,7 @@ export default function ApiTestPage() {
               setInputValue(e.target.value);
             }}
           />
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn-blue">
             {requestSent ? "Sent request..." : "Create row"}
           </button>
         </form>
@@ -81,7 +81,7 @@ export default function ApiTestPage() {
 
       <h2>Clearing the database</h2>
 
-      <button onClick={clearDatabase} className="btn btn-red">
+      <button onClick={clearDatabase} className="btn-red">
         {requestSent ? "Sent request..." : "Clear database"}
       </button>
 

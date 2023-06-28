@@ -36,17 +36,17 @@
   
   /* Buttons */
   .btn {
-    @apply text-white py-[6px] px-4 rounded;
+    @apply py-[6px] px-4 rounded;
   }
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 active:bg-blue-800;
+  .btn-blue {
+    @apply btn text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800;
   }
   .btn-red {
-    @apply bg-red-600 hover:bg-red-700 active:bg-red-800;
+    @apply btn text-white bg-red-600 hover:bg-red-700 active:bg-red-800;
   }
   
   /* Sidebar */
   .sidebar-header {
-    @apply text-lg;
+    @apply text-lg mt-4;
   }
 }

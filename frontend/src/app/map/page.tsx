@@ -2,6 +2,7 @@
 import { useState } from "react";
 import MapComponent from "./MapComponent";
 import Sidebar from "./Sidebar";
+import { GeoJson } from "./dataImportUtils";
 
 export default function MapPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -39,6 +40,36 @@ export default function MapPage() {
     });
   }
 
+  function importGeoJson(geoJson: GeoJson) {
+    if (!map) {
+      console.error("Map not initialized");
+      return;
+    }
+    
+    console.debug("importing geojson", geoJson);
+
+    // Add a data source containing sample GeoJSON data
+    map.addSource("imported", {
+      type: "geojson",
+      data: geoJson,
+    });
+
+    // Add a layer that draws the data source.
+    map.addLayer({
+      id: "imported",
+      type: "line",
+      source: "imported",
+      layout: {
+        "line-join": "round",
+        "line-cap": "round",
+      },
+      paint: {
+        "line-color": "#5abeff",
+        "line-width": 4,
+      },
+    });
+  }
+
   return (
     <main
       className={`${
@@ -53,6 +84,7 @@ export default function MapPage() {
           sidebarOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
           drawSampleData={drawSampleData}
+          importGeoJson={importGeoJson}
         />
       </div>
     </main>

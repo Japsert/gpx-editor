@@ -1,34 +1,27 @@
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SidebarContent from "./SidebarContent";
+import { GeoJson } from "./dataImportUtils";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
   drawSampleData: () => void;
+  importGeoJson: (geoJson: GeoJson) => void;
 }
 
 export default function Sidebar({
   sidebarOpen,
   toggleSidebar,
   drawSampleData,
+  importGeoJson,
 }: SidebarProps) {
-  function loadFromFile(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files![0];
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const contents = e.target?.result;
-      console.log(contents);
-    };
-    reader.readAsText(file);
-  }
-
   return (
     <div id="sidebar" className={`w-full h-1/2 md:w-96 md:h-full`}>
-      <SidebarContent drawSampleData={drawSampleData} />
+      <SidebarContent
+        drawSampleData={drawSampleData}
+        importGeoJson={importGeoJson}
+      />
 
       {/* Collapse sidebar button */}
       <button
