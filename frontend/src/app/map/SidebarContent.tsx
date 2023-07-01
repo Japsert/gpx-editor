@@ -1,5 +1,5 @@
+import { GeoJson, arcJsonToGeoJson } from "@/utils/dataImport";
 import { useState } from "react";
-import { GeoJson, toGeoJson } from "./dataImportUtils";
 
 interface SidebarContentProps {
   drawSampleData: () => void;
@@ -10,6 +10,7 @@ export default function SidebarContent({
   drawSampleData,
   importGeoJson,
 }: SidebarContentProps) {
+  // TODO move state to page.tsx?
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
   const processImportFiles = (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,9 +24,7 @@ export default function SidebarContent({
         if (!e.target) return;
         if (!e.target.result) return;
         const contents = e.target.result as string;
-        const fileType = file.name.split(".").pop();
-        if (!fileType) return;
-        const geoJson = await toGeoJson(contents, fileType);
+        const geoJson = arcJsonToGeoJson(contents);
         if (!geoJson) return;
         importGeoJson(geoJson);
       };
@@ -35,6 +34,7 @@ export default function SidebarContent({
 
   return (
     <div id="sidebar-content" className="p-4 overflow-y-auto h-full z-10">
+      {/* Button to import data from file */}
       <h2 className="sidebar-header mt-0">Load from file</h2>
       <form onSubmit={processImportFiles}>
         <input
