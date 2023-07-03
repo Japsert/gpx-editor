@@ -1,15 +1,12 @@
-import { GeoJson, arcJsonToGeoJson } from "@/utils/dataImport";
+import DataArtist from "@/utils/dataArtist";
+import { arcJsonToGeoJson } from "@/utils/dataImport";
 import { useState } from "react";
 
 interface SidebarContentProps {
-  drawSampleData: () => void;
-  importGeoJson: (geoJson: GeoJson) => void;
+  dataArtist?: DataArtist;
 }
 
-export default function SidebarContent({
-  drawSampleData,
-  importGeoJson,
-}: SidebarContentProps) {
+export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   // TODO move state to page.tsx?
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
@@ -26,7 +23,8 @@ export default function SidebarContent({
         const contents = e.target.result as string;
         const geoJson = arcJsonToGeoJson(contents);
         if (!geoJson) return;
-        importGeoJson(geoJson);
+        if (!dataArtist) return;
+        dataArtist.draw(geoJson);
       };
       reader.readAsText(file);
     }
@@ -40,7 +38,7 @@ export default function SidebarContent({
         <input
           title="Load from File"
           type="file"
-          accept=".json,.gpx"
+          accept=".json"
           multiple
           onChange={(e) => setSelectedFiles(e.target.files)}
         />
@@ -54,7 +52,7 @@ export default function SidebarContent({
 
       {/* Button to draw geojson data on the map */}
       <h2 className="sidebar-header">Draw sample data</h2>
-      <button onClick={drawSampleData} className="btn-primary">
+      <button onClick={dataArtist?.drawSample} className="btn-primary">
         Draw sample data
       </button>
     </div>

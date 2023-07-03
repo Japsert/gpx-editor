@@ -1,27 +1,22 @@
+import DataArtist from "@/utils/dataArtist";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SidebarContent from "./SidebarContent";
-import { GeoJson } from "./dataImportUtils";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
-  drawSampleData: () => void;
-  importGeoJson: (geoJson: GeoJson) => void;
+  dataArtist?: DataArtist;
 }
 
 export default function Sidebar({
   sidebarOpen,
   toggleSidebar,
-  drawSampleData,
-  importGeoJson,
+  dataArtist,
 }: SidebarProps) {
   return (
     <div id="sidebar" className={`w-full h-1/2 md:w-96 md:h-full`}>
-      <SidebarContent
-        drawSampleData={drawSampleData}
-        importGeoJson={importGeoJson}
-      />
+      <SidebarContent dataArtist={dataArtist} />
 
       {/* Collapse sidebar button */}
       <button

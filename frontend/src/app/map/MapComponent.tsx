@@ -1,3 +1,4 @@
+import DataArtist from "@/utils/dataArtist";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
@@ -10,9 +11,10 @@ mapboxgl.accessToken = accessToken;
 
 interface MapComponentProps {
   setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | undefined>>;
+  setDataArtist: React.Dispatch<React.SetStateAction<DataArtist | undefined>>;
 }
 
-export default function MapComponent({ setMap }: MapComponentProps) {
+export default function MapComponent({ setMap, setDataArtist }: MapComponentProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [lng, setLng] = useState(6.57);
@@ -31,6 +33,7 @@ export default function MapComponent({ setMap }: MapComponentProps) {
       zoom: zoom,
     });
     setMap(map.current);
+    setDataArtist(new DataArtist(map.current));
 
     map.current.addControl(new mapboxgl.NavigationControl());
 
@@ -53,7 +56,7 @@ export default function MapComponent({ setMap }: MapComponentProps) {
 
     // Clean up the observer when the component unmounts
     return () => {
-      console.log("unmounting map");
+      //console.log("unmounting map");
       //observer.unobserve(mapContainer.current); // immediately gets run for some reason
     };
   });

@@ -1,122 +1,139 @@
-export interface ArcJsonTimelineItemBase {
-  nextItemId?: string; // Not present in last item
-  floorsAscended: number;
-  previousItemId: string;
-  samples: {
-    zAcceleration: number;
-    recordingState: string;
-    secondsFromGMT: number;
-    courseVariance: number;
-    sampleId: string;
-    location: {
-      verticalAccuracy: number;
-      speed: number;
-      longitude: number;
-      horizontalAccuracy: number;
-      course: number;
-      latitude: number;
-      timestamp: string;
-      altitude: number;
+import { ArcJson, ArcJsonActivity, ArcJsonPlace, ArcJsonVisit } from "./types";
+
+class Feature implements GeoJSON.Feature {
+  type = "Feature" as const;
+  geometry: GeoJSON.Point | GeoJSON.LineString;
+  properties: GeoJSON.GeoJsonProperties;
+
+  constructor(
+    geometry: GeoJSON.Point | GeoJSON.LineString,
+    properties: GeoJSON.GeoJsonProperties
+  ) {
+    this.geometry = geometry;
+    this.properties = properties;
+  }
+}
+
+class Visit extends Feature {
+  constructor(
+    streetAddress: string,
+    time: string,
+    coordinates: [number, number, number]
+  ) {
+    const geometry = {
+      type: "Point" as const,
+      coordinates: coordinates,
     };
-    stepHz: number;
-    date: string;
-    movingState: string;
-    timelineItemId: string;
-    xyAcceleration: number;
-    classifiedType: string;
-    lastSaved: string;
-  }[];
-  isVisit: boolean;
-  floorsDescended: number;
-  endDate: string;
-  startDate: string;
-  altitude: number;
-  stepCount: number;
-  lastSaved: string;
-  itemId: string;
-}
-
-interface ArcJsonVisit extends ArcJsonTimelineItemBase {
-  radius: {
-    mean: number;
-    sd: number;
-  };
-  center: {
-    longitude: number;
-    latitude: number;
-  };
-}
-
-interface ArcJsonPlace extends ArcJsonTimelineItemBase {
-  placeId: string;
-  place: {
-    placeId: string;
-    radius: {
-      mean: number;
-      sd: number;
+    const properties = {
+      type: "visit",
+      streetAddress: streetAddress,
+      time: time,
     };
-    isHome: boolean;
-    lastSaved: string;
-    name: string;
-    center: {
-      longitude: number;
-      latitude: number;
+    super(geometry, properties);
+  }
+}
+
+class Place extends Feature {
+  constructor(
+    name: string,
+    time: string,
+    coordinates: [number, number, number]
+  ) {
+    const geometry = {
+      type: "Point" as const,
+      coordinates: coordinates,
     };
-  };
-  radius: {
-    mean: number;
-    sd: number;
-  };
-  manualPlace: boolean;
-  center: {
-    longitude: number;
-    latitude: number;
-  };
+    const properties = {
+      type: "place",
+      name: name,
+      time: time,
+    };
+    super(geometry, properties);
+  }
 }
 
-interface ArcJsonActivity extends ArcJsonTimelineItemBase {
-  uncertainActivityType?: string;
-  manualActivityType?: boolean;
-  activityTypeConfidenceScore?: number;
-  activityType?: string;
+class Activity extends Feature {
+  constructor(
+    activityType: string,
+    time: string,
+    timestamps: string[],
+    coordinates: [number, number, number][]
+  ) {
+    const geometry = {
+      type: "LineString" as const,
+      coordinates: coordinates,
+    };
+    const properties = {
+      type: "activity",
+      activityType: activityType,
+      time: time,
+      timestamps: timestamps,
+    };
+    super(geometry, properties);
+  }
 }
-
-type ArcJsonTimelineItem = ArcJsonVisit | ArcJsonPlace | ArcJsonActivity;
-
-type ArcJson = {
-  timelineItems: ArcJsonTimelineItem[];
-};
 
 export class GeoJson implements GeoJSON.FeatureCollection {
   type: "FeatureCollection";
-  features: GeoJSON.Feature[];
+  features: Feature[];
+  date: string;
 
   constructor() {
     this.type = "FeatureCollection";
     this.features = [];
+    this.date = "";
   }
 
-  addFeature(timelineItem: ArcJsonTimelineItem) {
-    const coordinates: [number, number][] = [];
-    for (const sample of timelineItem.samples) {
-      coordinates.push([sample.location.longitude, sample.location.latitude]);
+  addFeature(feature: Feature) {
+    this.features.push(feature);
+    if (this.date === "" && feature.properties) {
+      this.date = feature.properties.time.split("T")[0];
     }
-    this.features.push({
-      type: "Feature",
-      geometry: {
-        type: "LineString",
-        coordinates: coordinates,
-      },
-      properties: {
-        type:
+  }
+
+  addPlace(timelineItem: ArcJsonPlace) {
+    const name = timelineItem.place.name;
+    const time = timelineItem.startDate;
+    const coordinates: [number, number, number] = [
+      timelineItem.place.center.longitude,
+      timelineItem.place.center.latitude,
+      timelineItem.altitude,
+    ];
+    this.addFeature(new Place(name, time, coordinates));
+  }
+
+  addVisit(timelineItem: ArcJsonVisit) {
+    const streetAddress = timelineItem.streetAddress;
+    const time = timelineItem.startDate;
+    const coordinates: [number, number, number] = [
+      timelineItem.center.longitude,
+      timelineItem.center.latitude,
+      timelineItem.altitude,
+    ];
+    this.addFeature(new Visit(streetAddress, time, coordinates));
+  }
+
+  addActivity(timelineItem: ArcJsonActivity) {
+    const type = timelineItem.activityType;
+    const time = timelineItem.startDate;
+    const timestamps: string[] = [];
+    const coordinates: [number, number, number][] = [];
+    timelineItem.samples.forEach((sample) => {
+      timestamps.push(sample.location.timestamp);
+      coordinates.push([
+        sample.location.longitude,
+        sample.location.latitude,
+        sample.location.altitude,
+      ]);
     });
+    this.addFeature(new Activity(type, time, timestamps, coordinates));
   }
 }
 
 /**
  * Converts a JSON string following the Arc app format into a JSON object following the GeoJSON format.
  * The following properties are kept:
- * - location data (latitude, longitude)
+ * - location data (latitude, longitude, altitude)
  * - timestamp
  * @param data String following the format of the Arc app
  * @returns JSON object following the GeoJSON format, containing a subset of the properties of the input string
@@ -127,21 +144,18 @@ export function arcJsonToGeoJson(arcJsonString: string): GeoJson {
   const geoJson: GeoJson = new GeoJson();
 
   // Add timeline items to GeoJson
-  for (const timelineItem of arcJson.timelineItems) {
+  arcJson.timelineItems.forEach((timelineItem) => {
     if (timelineItem.isVisit) {
       // Either a visit or a place
       if (Object.hasOwn(timelineItem, "placeId")) {
-        // A place
-        geoJson.addFeature(timelineItem as ArcJsonPlace);
+        geoJson.addPlace(timelineItem as ArcJsonPlace);
       } else {
-        // A visit
-        geoJson.addFeature(timelineItem as ArcJsonVisit);
+        geoJson.addVisit(timelineItem as ArcJsonVisit);
       }
     } else {
-      // An activity
-      geoJson.addFeature(timelineItem as ArcJsonActivity);
+      geoJson.addActivity(timelineItem as ArcJsonActivity);
     }
-  }
+  });
 
   return geoJson;
 }
