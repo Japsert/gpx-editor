@@ -1,9 +1,12 @@
-import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import {
+  faArrowUpRightFromSquare,
+  faBars,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function SiteHeader() {
   return (
@@ -34,7 +37,10 @@ export default function SiteHeader() {
               className="flex gap-2 items-center"
             >
               <FontAwesomeIcon icon={faGithub} size="lg" />
-              <span className="header-link">GitHub</span>
+              <span className="header-link">
+                GitHub{" "}
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
+              </span>
             </Link>
           </div>
         </div>
