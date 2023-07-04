@@ -1,6 +1,6 @@
 export interface ArcJsonTimelineItem {
   itemId: string;
-  nextItemId: string;
+  nextItemId?: string;
   previousItemId: string;
   isVisit: boolean;
   altitude: number;
