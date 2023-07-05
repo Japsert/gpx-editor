@@ -76,19 +76,14 @@ class Activity extends Feature {
 export class GeoJson implements GeoJSON.FeatureCollection {
   type: "FeatureCollection";
   features: Feature[];
-  date: string;
 
   constructor() {
     this.type = "FeatureCollection";
     this.features = [];
-    this.date = "";
   }
 
   addFeature(feature: Feature) {
     this.features.push(feature);
-    if (this.date === "" && feature.properties) {
-      this.date = feature.properties.time.split("T")[0];
-    }
   }
 
   addPlace(timelineItem: ArcJsonPlace) {
@@ -99,7 +94,7 @@ export class GeoJson implements GeoJSON.FeatureCollection {
       timelineItem.place.center.latitude,
       timelineItem.altitude,
     ];
-    this.addFeature(new Place(name, time, coordinates));
+    this.features.push(new Place(name, time, coordinates));
   }
 
   addVisit(timelineItem: ArcJsonVisit) {
@@ -110,7 +105,7 @@ export class GeoJson implements GeoJSON.FeatureCollection {
       timelineItem.center.latitude,
       timelineItem.altitude,
     ];
-    this.addFeature(new Visit(streetAddress, time, coordinates));
+    this.features.push(new Visit(streetAddress, time, coordinates));
   }
 
   addActivity(timelineItem: ArcJsonActivity) {
@@ -126,7 +121,7 @@ export class GeoJson implements GeoJSON.FeatureCollection {
         sample.location.altitude,
       ]);
     });
-    this.addFeature(new Activity(type, time, timestamps, coordinates));
+    this.features.push(new Activity(type, time, timestamps, coordinates));
   }
 }
 

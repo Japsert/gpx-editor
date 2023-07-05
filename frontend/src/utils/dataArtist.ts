@@ -1,6 +1,8 @@
 import mapboxgl from "mapbox-gl";
 import { GeoJson } from "./dataImport";
 
+const CUSTOM_PREFIX = "data-";
+
 /**
  * Class for drawing GeoJson data on a map.
  */
@@ -16,36 +18,52 @@ export default class DataArtist {
   }
 
   /**
-   * Draw a GeoJson object on the map.
-   * Has to be an arrow function to keep the correct context (otherwise, `this` would be undefined)
-   * @param geoJson GeoJson object to draw on the map
+   * Clear all GeoJson data from the map.
    */
-  draw = (geoJson: GeoJson) => {
+  clear = () => {
     if (!this.map) {
       console.error("Map not initialized");
       return;
     }
+    if (!this.map.loaded()) return;
 
-    // TEMP: Remove old source, its layers and its images
-    if (this.map.getLayer(geoJson.date + "-lines"))
-      this.map.removeLayer(geoJson.date + "-lines");
-    if (this.map.getLayer(geoJson.date + "-points"))
-      this.map.removeLayer(geoJson.date + "-points");
-    if (this.map.getSource(geoJson.date)) this.map.removeSource(geoJson.date);
-    if (this.map.hasImage("circle-icon")) this.map.removeImage("circle-icon");
+    // Remove all data layers, sources and images
+    this.map.getStyle().layers.forEach((layer) => {
+      if (layer.id.startsWith(CUSTOM_PREFIX)) this.map.removeLayer(layer.id);
+    });
+    for (const source in this.map.getStyle().sources) {
+      if (source.startsWith(CUSTOM_PREFIX)) this.map.removeSource(source);
+    }
+    this.map.listImages().forEach((image) => {
+      if (image.startsWith(CUSTOM_PREFIX)) this.map.removeImage(image);
+    });
+  };
+
+  /**
+   * Draw a GeoJson object on the map.
+   * Has to be an arrow function to keep the correct context (otherwise, `this` would be undefined)
+   * @param date Date of the GeoJson object
+   * @param geoJson GeoJson object to draw on the map
+   */
+  draw = (date: Date, geoJson: GeoJson) => {
+    if (!this.map) {
+      console.error("Map not initialized");
+      return;
+    }
+    
+    const dateString = date.toISOString().split("T")[0];
 
     // Add the GeoJSON source
-    this.map.addSource(geoJson.date, {
+    this.map.addSource(CUSTOM_PREFIX + dateString, {
       type: "geojson",
       data: geoJson,
     });
 
     // Lines layers
-    console.log(geoJson);
     this.map.addLayer({
-      id: geoJson.date + "-lines",
+      id: CUSTOM_PREFIX + dateString + "-lines",
       type: "line",
-      source: geoJson.date,
+      source: CUSTOM_PREFIX + dateString,
       layout: {
         "line-join": "round",
         "line-cap": "round",
@@ -68,11 +86,11 @@ export default class DataArtist {
     this.map.loadImage("/point.png", (error, image) => {
       if (error) throw error;
       if (!image) throw new Error("Image not loaded");
-      this.map.addImage("circle-icon", image);
+      this.map.addImage("data-circle-icon", image);
       this.map.addLayer({
-        id: geoJson.date + "-points",
+        id: CUSTOM_PREFIX + dateString + "-points",
         type: "symbol",
-        source: geoJson.date,
+        source: CUSTOM_PREFIX + dateString,
         filter: ["==", "$type", "Point"],
         layout: {
           "icon-image": "circle-icon",
@@ -81,36 +99,6 @@ export default class DataArtist {
         },
         paint: {},
       });
-    });
-  };
-
-  /**
-   * Draws a sample GeoJson object on the map.
-   * Has to be an arrow function to keep the correct context (otherwise, `this` would be undefined)
-   */
-  drawSample = () => {
-    if (!this.map) {
-      console.error("Map not initialized");
-      return;
-    }
-
-    this.map.addSource("sample", {
-      type: "geojson",
-      data: "/sample.geojson",
-    });
-
-    this.map.addLayer({
-      id: "sample",
-      type: "line",
-      source: "sample",
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-      paint: {
-        "line-color": "#5abeff",
-        "line-width": 4,
-      },
     });
   };
 }

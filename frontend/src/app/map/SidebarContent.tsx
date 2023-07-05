@@ -1,21 +1,55 @@
 import DataArtist from "@/utils/dataArtist";
-import { arcJsonToGeoJson } from "@/utils/dataImport";
-import { useState } from "react";
+import { GeoJson, arcJsonToGeoJson } from "@/utils/dataImport";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 
 interface SidebarContentProps {
   dataArtist?: DataArtist;
 }
 
+/** Returns true if the two dates are the same day. */
+function isSameDay(date1: Date, date2: Date) {
+  return date1.toDateString() === date2.toDateString();
+}
+
+class GeoJsonMap extends Map<Date, GeoJson> {
+  get(key: Date): GeoJson | undefined {
+    for (const [date, geoJson] of this.entries()) {
+      if (isSameDay(date, key)) return geoJson;
+    }
+  }
+}
+
 export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   // TODO move state to page.tsx?
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [data, setData] = useState<GeoJsonMap>(new GeoJsonMap());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
-  const processImportFiles = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!dataArtist) return;
+    const geoJson = data.get(currentDate);
+    if (!geoJson) {
+      dataArtist.clear();
+    } else {
+      dataArtist.clear();
+      dataArtist.draw(currentDate, geoJson);
+    }
+  }, [currentDate, data, dataArtist]);
+
+  function processImportFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
+    const selectedFiles = e.target.files;
     if (!selectedFiles) return;
     // Loop over selected files, convert to geojson, and import
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
+      // file is named like 2023-07-05.json
+      const date = new Date(file.name.split(".")[0]);
+
       const reader = new FileReader();
       reader.onload = async (e) => {
         if (!e.target) return;
@@ -23,38 +57,94 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         const contents = e.target.result as string;
         const geoJson = arcJsonToGeoJson(contents);
         if (!geoJson) return;
-        if (!dataArtist) return;
-        dataArtist.draw(geoJson);
+        setData((prev) => prev.set(date, geoJson));
       };
       reader.readAsText(file);
     }
-  };
+  }
+
+  /** Sets the current date to the day before it. */
+  function prevDay() {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() - 1);
+    setCurrentDate(date);
+  }
+
+  /** Sets the current date to the day after it, unless the date is today. */
+  function nextDay() {
+    if (isSameDay(currentDate, new Date())) return;
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() + 1);
+    setCurrentDate(date);
+  }
+
+  /**
+   * Returns a string representation of the current date.
+   * If the date is today, returns "Today", if yesterday, returns "Yesterday".
+   * Otherwise, returns a string like "Wednesday, 5 July 2023".
+   */
+  function currentDateToString() {
+    if (isSameDay(currentDate, new Date())) return "Today";
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (isSameDay(currentDate, yesterday)) return "Yesterday";
+
+    const dayOfWeek = currentDate.toLocaleDateString("en", { weekday: "long" });
+    const day = currentDate.toLocaleDateString("en", { day: "numeric" });
+    const month = currentDate.toLocaleDateString("en", { month: "long" });
+    const year = currentDate.toLocaleDateString("en", { year: "numeric" });
+    const dateString = `${dayOfWeek}, ${day} ${month} ${year}`;
+    return dateString;
+  }
 
   return (
     <div id="sidebar-content" className="p-4 overflow-y-auto h-full z-10">
       {/* Button to import data from file */}
       <h2 className="sidebar-header mt-0">Load from file</h2>
-      <form onSubmit={processImportFiles}>
+      <form>
         <input
           title="Load from File"
           type="file"
           accept=".json"
           multiple
-          onChange={(e) => setSelectedFiles(e.target.files)}
+          onChange={(e) => processImportFiles(e)}
         />
-        <button
-          type="submit"
-          disabled={!selectedFiles || selectedFiles.length == 0}
-        >
-          Load
-        </button>
       </form>
 
-      {/* Button to draw geojson data on the map */}
-      <h2 className="sidebar-header">Draw sample data</h2>
-      <button onClick={dataArtist?.drawSample} className="btn-primary">
-        Draw sample data
-      </button>
+      <hr className="mt-4" />
+
+      <div className="flex full mt-4 items-center">
+        <button onClick={prevDay} className="p-2">
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+        </button>
+        <h2 className="text-lg grow text-center">{currentDateToString()}</h2>
+        <button
+          onClick={nextDay}
+          className="p-2"
+          disabled={isSameDay(currentDate, new Date())}
+        >
+          <FontAwesomeIcon
+            icon={faChevronRight}
+            size="lg"
+            className={
+              isSameDay(currentDate, new Date()) ? "text-gray-400" : ""
+            }
+          />
+        </button>
+      </div>
+
+      {data.get(currentDate) && (
+        <pre>{JSON.stringify(data.get(currentDate), null, 2)}</pre>
+      )}
+
+      {!data.get(currentDate) && (
+        <div className="flex justify-center items-center h-full">
+          <p className="text-center text-gray-500 italic">
+            No data for this day
+          </p>
+        </div>
+      )}
     </div>
   );
 }
