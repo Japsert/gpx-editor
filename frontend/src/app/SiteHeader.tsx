@@ -31,7 +31,7 @@ export default function SiteHeader() {
 
           <div className="">
             <Link
-              href="https://github.com/Japsert/gpx-editor"
+              href="https://github.com/Japsert/gpx-editor/tree/dev"
               target="_blank"
               rel="noopener noreferrer"
               className="flex gap-2 items-center"
