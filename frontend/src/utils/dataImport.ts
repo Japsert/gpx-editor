@@ -2,11 +2,11 @@ import { ArcJson, ArcJsonActivity, ArcJsonPlace, ArcJsonVisit } from "./types";
 
 class Feature implements GeoJSON.Feature {
   type = "Feature" as const;
-  geometry: GeoJSON.Point | GeoJSON.LineString;
+  geometry: GeoJSON.Geometry;
   properties: GeoJSON.GeoJsonProperties;
 
   constructor(
-    geometry: GeoJSON.Point | GeoJSON.LineString,
+    geometry: GeoJSON.Geometry,
     properties: GeoJSON.GeoJsonProperties
   ) {
     this.geometry = geometry;
@@ -18,7 +18,11 @@ class Visit extends Feature {
   constructor(
     streetAddress: string,
     time: string,
-    coordinates: [number, number, number]
+    coordinates: [number, number, number],
+    radius: {
+      mean: number;
+      sd: number;
+    }
   ) {
     const geometry = {
       type: "Point" as const,
@@ -28,6 +32,7 @@ class Visit extends Feature {
       type: "visit",
       streetAddress: streetAddress,
       time: time,
+      radius: radius,
     };
     super(geometry, properties);
   }
@@ -37,7 +42,11 @@ class Place extends Feature {
   constructor(
     name: string,
     time: string,
-    coordinates: [number, number, number]
+    coordinates: [number, number, number],
+    radius: {
+      mean: number;
+      sd: number;
+    }
   ) {
     const geometry = {
       type: "Point" as const,
@@ -47,6 +56,7 @@ class Place extends Feature {
       type: "place",
       name: name,
       time: time,
+      radius: radius,
     };
     super(geometry, properties);
   }
@@ -94,7 +104,8 @@ export class GeoJson implements GeoJSON.FeatureCollection {
       timelineItem.place.center.latitude,
       timelineItem.altitude,
     ];
-    this.features.push(new Place(name, time, coordinates));
+    const radius = timelineItem.place.radius;
+    this.features.push(new Place(name, time, coordinates, radius));
   }
 
   addVisit(timelineItem: ArcJsonVisit) {
@@ -105,7 +116,8 @@ export class GeoJson implements GeoJSON.FeatureCollection {
       timelineItem.center.latitude,
       timelineItem.altitude,
     ];
-    this.features.push(new Visit(streetAddress, time, coordinates));
+    const radius = timelineItem.radius;
+    this.features.push(new Visit(streetAddress, time, coordinates, radius));
   }
 
   addActivity(timelineItem: ArcJsonActivity) {

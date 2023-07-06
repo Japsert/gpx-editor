@@ -1,5 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import { GeoJson } from "./dataImport";
+import circle from "@turf/circle";
+import { Feature, Point, Properties } from "@turf/helpers";
 
 const CUSTOM_PREFIX = "data-";
 
@@ -90,23 +92,47 @@ export default class DataArtist {
       },
     });
 
-    // Points layer
+    // Radii
+    const circles: GeoJson = new GeoJson();
+    geoJson.features
+      .filter((feature) => feature.geometry.type === "Point")
+      .forEach((feature) => {
+        const center = feature.geometry as Point;
+        const radius = feature.properties?.radius.mean;
+        const circleFeature = circle(center, radius, { units: "meters" });
+        circles.addFeature(circleFeature);
+      });
+    this.map.addSource(CUSTOM_PREFIX + dateString + "-radii", {
+      type: "geojson",
+      data: circles,
+    });
+    this.map.addLayer({
+      id: CUSTOM_PREFIX + dateString + "-radii",
+      type: "fill",
+      source: CUSTOM_PREFIX + dateString + "-radii",
+      paint: {
+        "fill-color": "#b76eff", // purple
+        "fill-opacity": 0.4,
+      },
+    });
+
     this.map.loadImage("/point.png", (error, image) => {
       if (error) throw error;
       if (!image) throw new Error("Image not loaded");
-
       this.map.addImage(CUSTOM_PREFIX + "circle-icon", image);
+    });
 
-      this.map.addLayer({
-        id: CUSTOM_PREFIX + dateString + "-points",
-        type: "symbol",
-        source: CUSTOM_PREFIX + dateString, // reference the data source
-        layout: {
-          "icon-image": CUSTOM_PREFIX + "circle-icon", // reference the image
-          "icon-size": 0.15,
-          "icon-allow-overlap": true,
-        },
-      });
+    // Center
+    this.map.addLayer({
+      id: CUSTOM_PREFIX + dateString + "-points",
+      type: "symbol",
+      source: CUSTOM_PREFIX + dateString,
+      filter: ["==", "$type", "Point"],
+      layout: {
+        "icon-image": CUSTOM_PREFIX + "circle-icon",
+        "icon-size": 0.15,
+        "icon-allow-overlap": true,
+      },
     });
   };
 }
