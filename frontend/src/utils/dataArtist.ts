@@ -39,6 +39,14 @@ export default class DataArtist {
     });
   };
 
+  dateToString = (date: Date) => {
+    return [
+      date.getFullYear(),
+      ("0" + (date.getMonth() + 1)).slice(-2),
+      ("0" + date.getDate()).slice(-2),
+    ].join("-");
+  }
+
   /**
    * Draw a GeoJson object on the map.
    * Has to be an arrow function to keep the correct context (otherwise, `this` would be undefined)
@@ -50,8 +58,8 @@ export default class DataArtist {
       console.error("Map not initialized");
       return;
     }
-    
-    const dateString = date.toISOString().split("T")[0];
+
+    const dateString = this.dateToString(date);
 
     // Add the GeoJSON source
     this.map.addSource(CUSTOM_PREFIX + dateString, {
@@ -86,6 +94,13 @@ export default class DataArtist {
     this.map.loadImage("/point.png", (error, image) => {
       if (error) throw error;
       if (!image) throw new Error("Image not loaded");
+      console.debug(
+        "adding image to map, source: " + CUSTOM_PREFIX + dateString
+      );
+      console.debug(
+        "source: " +
+          JSON.stringify(this.map.getSource(CUSTOM_PREFIX + dateString))
+      );
       this.map.addImage("data-circle-icon", image);
       this.map.addLayer({
         id: CUSTOM_PREFIX + dateString + "-points",
