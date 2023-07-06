@@ -13,7 +13,7 @@ export default function CollapseSidebarComponent({
   return (
       <button
         id="collapse-sidebar-button"
-        className="relative w-12 h-12 -left-12 bottom-20 bg-white z-20 rounded-s-lg hidden md:block"
+        className="relative w-12 h-12 -left-12 bottom-20 bg-white rounded-s-lg hidden md:block"
         onClick={toggleSidebar}
       >
         <FontAwesomeIcon

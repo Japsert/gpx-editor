@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function SiteHeader() {
   return (
-    <header className="shadow z-40">
+    <header className="shadow">
       <nav className="flex justify-center items-center relative h-16 mx-8">
         {/* Main logo and title */}
         <Link href="/" className="flex gap-2">
