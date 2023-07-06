@@ -99,10 +99,10 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   }
 
   return (
-    <div id="sidebar-content" className="p-4 overflow-y-auto h-full z-10">
+    <div id="sidebar-content" className="flex flex-col p-4 h-full">
       {/* Button to import data from file */}
       <h2 className="sidebar-header mt-0">Load from file</h2>
-      <form>
+      <form className="mb-2">
         <input
           title="Load from File"
           type="file"
@@ -112,9 +112,9 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         />
       </form>
 
-      <hr className="mt-4" />
+      <hr className="-ml-4 -mr-4" />
 
-      <div className="flex full mt-4 items-center">
+      <div className="flex full items-center mt-2 mb-2">
         <button onClick={prevDay} className="p-2">
           <FontAwesomeIcon icon={faChevronLeft} size="lg" />
         </button>
@@ -134,15 +134,17 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         </button>
       </div>
 
+      <hr className="-ml-4 -mr-4" />
+
       {data.get(currentDate) && (
-        <pre>{JSON.stringify(data.get(currentDate), null, 2)}</pre>
+        <pre className="overflow-y-scroll">
+          {JSON.stringify(data.get(currentDate), null, 2)}
+        </pre>
       )}
 
       {!data.get(currentDate) && (
-        <div className="flex justify-center items-center h-full">
-          <p className="text-center text-gray-500 italic">
-            No data for this day
-          </p>
+        <div className="grow flex justify-center items-center">
+          <p className="text-gray-500 italic">No data for this day</p>
         </div>
       )}
     </div>
