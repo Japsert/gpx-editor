@@ -45,7 +45,7 @@ export default class DataArtist {
       ("0" + (date.getMonth() + 1)).slice(-2),
       ("0" + date.getDate()).slice(-2),
     ].join("-");
-  }
+  };
 
   /**
    * Draw a GeoJson object on the map.
@@ -94,25 +94,18 @@ export default class DataArtist {
     this.map.loadImage("/point.png", (error, image) => {
       if (error) throw error;
       if (!image) throw new Error("Image not loaded");
-      console.debug(
-        "adding image to map, source: " + CUSTOM_PREFIX + dateString
-      );
-      console.debug(
-        "source: " +
-          JSON.stringify(this.map.getSource(CUSTOM_PREFIX + dateString))
-      );
-      this.map.addImage("data-circle-icon", image);
+
+      this.map.addImage(CUSTOM_PREFIX + "circle-icon", image);
+
       this.map.addLayer({
         id: CUSTOM_PREFIX + dateString + "-points",
         type: "symbol",
-        source: CUSTOM_PREFIX + dateString,
-        filter: ["==", "$type", "Point"],
+        source: CUSTOM_PREFIX + dateString, // reference the data source
         layout: {
-          "icon-image": "circle-icon",
+          "icon-image": CUSTOM_PREFIX + "circle-icon", // reference the image
           "icon-size": 0.15,
           "icon-allow-overlap": true,
         },
-        paint: {},
       });
     });
   };
