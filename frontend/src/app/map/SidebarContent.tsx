@@ -26,9 +26,7 @@ class GeoJsonMap extends Map<Date, GeoJson> {
 }
 
 export default function SidebarContent({ dataArtist }: SidebarContentProps) {
-  // TODO move state to page.tsx?
   const [data, setData] = useState<GeoJsonMap>(new GeoJsonMap());
-  const [dataUpdated, setDataUpdated] = useState<boolean>(false); // to avoid recreating GeoJsonMap
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -40,13 +38,15 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
       dataArtist.clear();
       dataArtist.draw(currentDate, geoJson);
     }
-    setDataUpdated(false);
-  }, [currentDate, data, dataUpdated, dataArtist]);
+  }, [currentDate, data, dataArtist]);
 
   function processImportFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
+
+    const startTime = new Date().getTime();
+
     // Loop over selected files, convert to geojson, and import
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
@@ -60,10 +60,21 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         const contents = e.target.result as string;
         const geoJson = arcJsonToGeoJson(contents);
         if (!geoJson) return;
-        setData((prev) => prev.set(date, geoJson));
-        setDataUpdated(true);
+        setData((prev) => {
+          const next = new GeoJsonMap(prev);
+          next.set(date, geoJson);
+          return next;
+        });
       };
       reader.readAsText(file);
+    }
+
+    const endTime = new Date().getTime();
+    const timeTakenMs = endTime - startTime;
+    if (timeTakenMs > 1) {
+      alert(
+        `Importing ${selectedFiles.length} files took ${timeTakenMs}ms. Consider changing the setData call in the processImportFiles function to not create a new GeoJsonMap each time. (check commit after 6eebd2c on 2023-7-7)`
+      );
     }
   }
 
@@ -138,12 +149,11 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         </button>
       </div>
 
-      <hr className="my-2"/>
+      <hr className="my-2" />
 
       <div className="h-full overflow-y-auto">
-        <Timeline geoJson={data.get(currentDate)}/>
+        <Timeline geoJson={data.get(currentDate)} />
       </div>
-
     </div>
   );
 }

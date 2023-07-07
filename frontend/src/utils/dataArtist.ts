@@ -63,9 +63,6 @@ export default class DataArtist {
 
     const dateString = this.dateToString(date);
 
-    // We might call this function twice
-    if (this.map.getStyle().sources[CUSTOM_PREFIX + dateString]) return;
-
     // Add the GeoJSON source
     this.map.addSource(CUSTOM_PREFIX + dateString, {
       type: "geojson",
