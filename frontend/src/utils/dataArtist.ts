@@ -96,14 +96,17 @@ export default class DataArtist {
     });
 
     // Radii
-    const circles: GeoJson = new GeoJson();
+    const circles: GeoJSON.FeatureCollection = {
+      type: "FeatureCollection",
+      features: [],
+    }; // Not using GeoJson class because we don't have the required properties (itemId, etc.)
     geoJson.features
       .filter((feature) => feature.geometry.type === "Point")
       .forEach((feature) => {
         const center = feature.geometry as Point;
         const radius = feature.properties?.radius.mean;
         const circleFeature = circle(center, radius, { units: "meters" });
-        circles.addFeature(circleFeature);
+        circles.features.push(circleFeature);
       });
     this.map.addSource(CUSTOM_PREFIX + dateString + "-radii", {
       type: "geojson",

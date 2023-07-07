@@ -1,85 +1,88 @@
 import { ArcJson, ArcJsonActivity, ArcJsonPlace, ArcJsonVisit } from "./types";
 
+type FeatureProperties = {
+  type: string;
+  itemId: string;
+  time: string;
+} & GeoJSON.GeoJsonProperties;
+
 class Feature implements GeoJSON.Feature {
   type = "Feature" as const;
   geometry: GeoJSON.Geometry;
-  properties: GeoJSON.GeoJsonProperties;
+  properties: FeatureProperties;
 
-  constructor(
-    geometry: GeoJSON.Geometry,
-    properties: GeoJSON.GeoJsonProperties
-  ) {
+  constructor(geometry: GeoJSON.Geometry, properties: FeatureProperties) {
     this.geometry = geometry;
     this.properties = properties;
   }
 }
 
-class Visit extends Feature {
+interface VisitProperties extends FeatureProperties {
+  streetAddress: string;
+  radius: {
+    mean: number;
+    sd: number;
+  };
+}
+
+export class Visit extends Feature {
+  properties: VisitProperties;
+
   constructor(
-    streetAddress: string,
-    time: string,
     coordinates: [number, number, number],
-    radius: {
-      mean: number;
-      sd: number;
-    }
+    properties: VisitProperties
   ) {
     const geometry = {
       type: "Point" as const,
       coordinates: coordinates,
     };
-    const properties = {
-      type: "visit",
-      streetAddress: streetAddress,
-      time: time,
-      radius: radius,
-    };
     super(geometry, properties);
+    this.properties = properties;
   }
 }
 
-class Place extends Feature {
+interface PlaceProperties extends FeatureProperties {
+  name: string;
+  radius: {
+    mean: number;
+    sd: number;
+  };
+}
+
+export class Place extends Feature {
+  properties: PlaceProperties;
+
   constructor(
-    name: string,
-    time: string,
     coordinates: [number, number, number],
-    radius: {
-      mean: number;
-      sd: number;
-    }
+    properties: PlaceProperties
   ) {
     const geometry = {
       type: "Point" as const,
       coordinates: coordinates,
     };
-    const properties = {
-      type: "place",
-      name: name,
-      time: time,
-      radius: radius,
-    };
     super(geometry, properties);
+    this.properties = properties;
   }
 }
 
-class Activity extends Feature {
+interface ActivityProperties extends FeatureProperties {
+  activityType: string;
+  timestamps: string[];
+}
+
+export class Activity extends Feature {
+  properties: ActivityProperties;
+
   constructor(
-    activityType: string,
-    time: string,
-    timestamps: string[],
-    coordinates: [number, number, number][]
+    coordinates: [number, number, number][],
+    properties: ActivityProperties
   ) {
     const geometry = {
       type: "LineString" as const,
       coordinates: coordinates,
     };
-    const properties = {
-      type: "activity",
-      activityType: activityType,
-      time: time,
-      timestamps: timestamps,
-    };
     super(geometry, properties);
+    this.properties = properties;
   }
 }
 
@@ -97,43 +100,67 @@ export class GeoJson implements GeoJSON.FeatureCollection {
   }
 
   addPlace(timelineItem: ArcJsonPlace) {
-    const name = timelineItem.place.name;
-    const time = timelineItem.startDate;
     const coordinates: [number, number, number] = [
       timelineItem.place.center.longitude,
       timelineItem.place.center.latitude,
       timelineItem.altitude,
     ];
+    const itemId = timelineItem.itemId;
+    const time = timelineItem.startDate;
+    const name = timelineItem.place.name;
     const radius = timelineItem.place.radius;
-    this.features.push(new Place(name, time, coordinates, radius));
+    const props: PlaceProperties = {
+      type: "place",
+      itemId,
+      time,
+      name,
+      radius,
+    };
+    this.features.push(new Place(coordinates, props));
   }
 
   addVisit(timelineItem: ArcJsonVisit) {
-    const streetAddress = timelineItem.streetAddress;
-    const time = timelineItem.startDate;
     const coordinates: [number, number, number] = [
       timelineItem.center.longitude,
       timelineItem.center.latitude,
       timelineItem.altitude,
     ];
+    const itemId = timelineItem.itemId;
+    const time = timelineItem.startDate;
+    const streetAddress = timelineItem.streetAddress;
     const radius = timelineItem.radius;
-    this.features.push(new Visit(streetAddress, time, coordinates, radius));
+    const props: VisitProperties = {
+      type: "visit",
+      itemId,
+      time,
+      streetAddress,
+      radius,
+    };
+    this.features.push(new Visit(coordinates, props));
   }
 
   addActivity(timelineItem: ArcJsonActivity) {
-    const type = timelineItem.activityType;
-    const time = timelineItem.startDate;
-    const timestamps: string[] = [];
     const coordinates: [number, number, number][] = [];
+    const itemId = timelineItem.itemId;
+    const time = timelineItem.startDate;
+    const activityType = timelineItem.activityType;
+    const timestamps: string[] = [];
     timelineItem.samples.forEach((sample) => {
-      timestamps.push(sample.location.timestamp);
       coordinates.push([
         sample.location.longitude,
         sample.location.latitude,
         sample.location.altitude,
       ]);
+      timestamps.push(sample.location.timestamp);
     });
-    this.features.push(new Activity(type, time, timestamps, coordinates));
+    const props: ActivityProperties = {
+      type: "activity",
+      itemId,
+      time,
+      activityType: activityType,
+      timestamps,
+    };
+    this.features.push(new Activity(coordinates, props));
   }
 }
 
