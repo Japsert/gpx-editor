@@ -56,7 +56,7 @@ export default function Timeline({ geoJson }: TimelineProps) {
     // Format time
     const time = new Date(visit.properties.time);
     const timeString = `${time.getHours()}:${time.getMinutes()}`; // TODO: use Luxon to format time
-    
+
     const durationSeconds = 3661; // TODO: get duration from nextItem.time - time
     const hours = Math.floor(durationSeconds / 3600);
     const minutes = Math.floor((durationSeconds % 3600) / 60);
@@ -76,7 +76,7 @@ export default function Timeline({ geoJson }: TimelineProps) {
       durationComponents.push(`${seconds}s`);
     }
     const durationString = durationComponents.join(" ");
-    
+
     return (
       <tr key={visit.properties.itemId} className="flex items-center my-1">
         <td className="flex flex-col w-12">
@@ -173,20 +173,22 @@ export default function Timeline({ geoJson }: TimelineProps) {
   }
   return (
     <table className="h-full ml-4">
-      {geoJson.features.map((feature) => {
-        const type = feature.properties?.type;
-        if (!type) return;
-        switch (type) {
-          case "place":
-            return createPlaceHtml(feature as Place);
+      <tbody>
+        {geoJson.features.map((feature) => {
+          const type = feature.properties?.type;
+          if (!type) return;
+          switch (type) {
+            case "place":
+              return createPlaceHtml(feature as Place);
 
-          case "visit":
-            return createVisitHtml(feature as Visit);
+            case "visit":
+              return createVisitHtml(feature as Visit);
 
-          case "activity":
-            return createActivityHtml(feature as Activity);
-        }
-      })}
+            case "activity":
+              return createActivityHtml(feature as Activity);
+          }
+        })}
+      </tbody>
     </table>
   );
 }
