@@ -1,7 +1,7 @@
+import circle from "@turf/circle";
+import { Point } from "@turf/helpers";
 import mapboxgl from "mapbox-gl";
 import { GeoJson } from "./dataImport";
-import circle from "@turf/circle";
-import { Feature, Point, Properties } from "@turf/helpers";
 
 const CUSTOM_PREFIX = "data-";
 
@@ -62,6 +62,9 @@ export default class DataArtist {
     }
 
     const dateString = this.dateToString(date);
+
+    // We might call this function twice
+    if (this.map.getStyle().sources[CUSTOM_PREFIX + dateString]) return;
 
     // Add the GeoJSON source
     this.map.addSource(CUSTOM_PREFIX + dateString, {

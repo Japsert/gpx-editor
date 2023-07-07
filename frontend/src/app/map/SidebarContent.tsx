@@ -27,6 +27,7 @@ class GeoJsonMap extends Map<Date, GeoJson> {
 export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   // TODO move state to page.tsx?
   const [data, setData] = useState<GeoJsonMap>(new GeoJsonMap());
+  const [dataUpdated, setDataUpdated] = useState<boolean>(false); // to avoid recreating GeoJsonMap
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -38,7 +39,8 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
       dataArtist.clear();
       dataArtist.draw(currentDate, geoJson);
     }
-  }, [currentDate, data, dataArtist]);
+    setDataUpdated(false);
+  }, [currentDate, data, dataUpdated, dataArtist]);
 
   function processImportFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -58,6 +60,7 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         const geoJson = arcJsonToGeoJson(contents);
         if (!geoJson) return;
         setData((prev) => prev.set(date, geoJson));
+        setDataUpdated(true);
       };
       reader.readAsText(file);
     }
