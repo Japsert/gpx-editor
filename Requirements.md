@@ -18,7 +18,7 @@ The user will be able to:
 
 - Import files from the Arc app
 - See the activity displayed on a map
-  - Visits are marked with pins and have a radius indicating accuracy
+  - Visits are marked with dots and have a radius indicating accuracy
   - Activities are drawn as lines, colored based on the activity type
 - Edit a visit
   - Choose from nearby places
@@ -54,13 +54,15 @@ After importing the files, the user should be able to edit the data (in bulk, se
 
 #### 3.1.2 Displaying Data
 
-The data must be displayed on a map. Visits should be marked as dots, and activities should be drawn as lines. The lines must be colored based on the activity type.
+The data must be displayed on a map. Visits should be marked as dots, and activities should be drawn as lines. The visits could have a radius around them, indicating the accuracy of the location. The lines must be colored based on the activity type.
 
 The user must be able to filter the data. There are multiple ways to do this:
 
 - By activity type: select any combination of activities to display.
 - By date: filter by day, week, month, year, or a custom date range.
 - By location: filter by a bounding box on the map.
+
+In addition, a timeline overview of a day must be displayed. This timeline will show the activities and visits for the day, in a similar way to the Arc app.
 
 ### 3.1.3 Editing Data
 
@@ -97,3 +99,4 @@ The app must be compatible with all modern browsers. It could also be made into 
 ### 4.1 Changes
 
 - 2023-07-01: First version
+- 2023-07-07: Added a few lines about radii and timeline
