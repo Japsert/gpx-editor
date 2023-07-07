@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import Timeline from "./Timeline";
 
 interface SidebarContentProps {
   dataArtist?: DataArtist;
@@ -104,8 +105,7 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Button to import data from file */}
-      <h2 className="sidebar-header mt-0">Load from file</h2>
-      <form className="mb-2">
+      <form className="mt-2">
         <input
           title="Load from File"
           type="file"
@@ -115,9 +115,10 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         />
       </form>
 
-      <hr className="-ml-4 -mr-4" />
+      <hr className="my-2" />
 
-      <div className="flex full items-center mt-2 mb-2">
+      {/* Date picker */}
+      <div className="flex full items-center mx-2">
         <button onClick={prevDay} className="p-2">
           <FontAwesomeIcon icon={faChevronLeft} size="lg" />
         </button>
@@ -137,19 +138,12 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
         </button>
       </div>
 
-      <hr className="-ml-4 -mr-4" />
+      <hr className="my-2"/>
 
-      {data.get(currentDate) && (
-        <pre className="overflow-y-scroll">
-          {JSON.stringify(data.get(currentDate), null, 2)}
-        </pre>
-      )}
+      <div className="h-full">
+        <Timeline geoJson={data.get(currentDate)}/>
+      </div>
 
-      {!data.get(currentDate) && (
-        <div className="grow flex justify-center items-center">
-          <p className="text-gray-500 italic">No data for this day</p>
-        </div>
-      )}
     </div>
   );
 }
