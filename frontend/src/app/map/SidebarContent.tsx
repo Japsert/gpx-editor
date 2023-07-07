@@ -140,7 +140,7 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
 
       <hr className="my-2"/>
 
-      <div className="h-full">
+      <div className="h-full overflow-y-auto">
         <Timeline geoJson={data.get(currentDate)}/>
       </div>
 

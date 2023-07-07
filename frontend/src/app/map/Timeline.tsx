@@ -34,14 +34,16 @@ export default function Timeline({ geoJson }: TimelineProps) {
     const durationString = durationComponents.join(" ");
 
     return (
-      <tr key={place.properties.itemId} className="flex my-1">
-        <td className="flex flex-col">
-          <span className="">{timeString}</span>
+      <tr key={place.properties.itemId} className="flex items-center my-1">
+        <td className="flex flex-col w-12">
+          <span className="w-12">{timeString}</span>
           <span className="text-sm">{durationString}</span>
         </td>
-        <td className="w-8 text-center">
+
+        <td className="w-16 text-center">
           <FontAwesomeIcon icon={faLocationDot} size="lg" />
         </td>
+
         <td>
           <span className="font-medium">{place.properties.name}</span>
         </td>
@@ -49,11 +51,47 @@ export default function Timeline({ geoJson }: TimelineProps) {
     );
   }
 
+  // TODO: merge visit with place?
   function createVisitHtml(visit: Visit) {
+    // Format time
+    const time = new Date(visit.properties.time);
+    const timeString = `${time.getHours()}:${time.getMinutes()}`; // TODO: use Luxon to format time
+    
+    const durationSeconds = 3661; // TODO: get duration from nextItem.time - time
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.floor((durationSeconds % 3600) / 60);
+    const seconds = Math.floor(durationSeconds % 60);
+    const durationComponents: string[] = [];
+    if (hours > 0) {
+      durationComponents.push(`${hours}h`);
+      if (minutes > 0) {
+        durationComponents.push(`${minutes}m`);
+      }
+    } else if (minutes > 0) {
+      durationComponents.push(`${minutes}m`);
+      if (minutes < 3) {
+        durationComponents.push(`${seconds}s`);
+      }
+    } else {
+      durationComponents.push(`${seconds}s`);
+    }
+    const durationString = durationComponents.join(" ");
+    
     return (
-      <div key={visit.properties.itemId}>
-        visit: {visit.properties.streetAddress}
-      </div>
+      <tr key={visit.properties.itemId} className="flex items-center my-1">
+        <td className="flex flex-col w-12">
+          <span className="w-12">{timeString}</span>
+          <span className="text-sm">{durationString}</span>
+        </td>
+
+        <td className="w-16 text-center">
+          <FontAwesomeIcon icon={faLocationDot} size="lg" />
+        </td>
+
+        <td>
+          <span className="font-medium">{visit.properties.streetAddress}</span>
+        </td>
+      </tr>
     );
   }
 
@@ -106,15 +144,23 @@ export default function Timeline({ geoJson }: TimelineProps) {
     const durationString = durationComponents.join(", ");
 
     return (
-      <div key={activity.properties.itemId} className="flex my-1">
-        <span className={`ml-16 w-1 ${colorClass} rounded-full`} />
-        <div className="flex flex-col my-1 ml-4">
+      <tr key={activity.properties.itemId} className="flex items-center my-1">
+        <td className="w-12"></td>
+
+        <td className="w-16 text-center">
+          <span
+            // inline-block is the only way I can find to display and center the span
+            className={`inline-block h-16 w-1 ${colorClass} rounded-full`}
+          />
+        </td>
+
+        <td className="flex flex-col">
           <span className="font-medium text-sm leading-[1.2]">
             {activityTypeString}
           </span>
           <span className="text-sm">{durationString}</span>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   }
 
@@ -126,7 +172,7 @@ export default function Timeline({ geoJson }: TimelineProps) {
     );
   }
   return (
-    <table className="h-full mx-2">
+    <table className="h-full ml-4">
       {geoJson.features.map((feature) => {
         const type = feature.properties?.type;
         if (!type) return;
