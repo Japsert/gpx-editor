@@ -99,7 +99,7 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   }
 
   return (
-    <div id="sidebar-content" className="flex flex-col p-4 h-full">
+    <div className="flex flex-col h-full">
       {/* Button to import data from file */}
       <h2 className="sidebar-header mt-0">Load from file</h2>
       <form className="mb-2">

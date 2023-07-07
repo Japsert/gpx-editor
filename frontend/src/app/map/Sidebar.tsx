@@ -14,7 +14,7 @@ export default function Sidebar({
   dataArtist,
 }: SidebarProps) {
   return (
-    <div id="sidebar" className={`w-full h-1/2 md:w-96 md:h-full`}>
+    <div className="w-full h-1/2 md:w-96 md:h-full">
       <SidebarContent dataArtist={dataArtist} />
 
       <CollapseSidebarButton
