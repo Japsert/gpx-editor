@@ -49,6 +49,8 @@ Notes:
 
 - if one of place, manualPlace, or placeId is present, all three will be present
 - if either averageHeartRate or maxHeartRate is present, both will be present
+- if isHome is present, it is true
+- if either foursquareVenueId or foursquareCategoryId is present, both will be present
 
 - radius
   - mean
