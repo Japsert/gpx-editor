@@ -1,20 +1,27 @@
-# arcjson 2023-06-29
+# arcjson
 
 ## common
 
+Notes:
+
+- if either activeEnergyBurned or hkStepCount is present, both will be present
+- sometimes, a sample will have no zAcceleration, xyAcceleration, courseVariance, or stepHz, the location will be null, and the recordingState will be "off". This is probably a bug in the app, and the sample should be ignored.
+
 - itemId
-- nextItemId
+- nextItemId?
 - previousItemId
-- isVisit
+- isVisit (true if visit, false if activity)
 - altitude
 - floorsAscended
 - floorsDescended
 - stepCount
+- hkStepCount?
+- activeEnergyBurned?
 - samples
   - sampleId
   - timelineItemId
   - date
-  - secondsFromGMT: 7200
+  - secondsFromGMT
   - recordingState
   - movingState
   - classifiedType
@@ -27,10 +34,10 @@
     - latitude
     - timestamp
     - altitude
-  - xyAcceleration
-  - zAcceleration
-  - courseVariance
-  - stepHz
+  - xyAcceleration?
+  - zAcceleration?
+  - courseVariance?
+  - stepHz?
   - lastSaved
 - startDate
 - endDate
@@ -38,21 +45,21 @@
 
 ## visit extends common
 
-- hkStepCount
+Notes:
+
+- if one of place, manualPlace, or placeId is present, all three will be present
+- if either averageHeartRate or maxHeartRate is present, both will be present
+
 - radius
   - mean
   - sd
-- activeEnergyBurned
 - maxHeartRate?
 - averageHeartRate?
 - center
   - longitude
   - latitude
-- streetAddress
-
-## place extends visit
-
-- place
+- streetAddress?
+- place?
   - placeId
   - isHome?: true
   - name
@@ -65,8 +72,8 @@
   - foursquareVenueId?
   - foursquareCategoryId?
   - lastSaved
-- manualPlace
-- placeId
+- manualPlace?
+- placeId?
 
 ## activity extends common
 
