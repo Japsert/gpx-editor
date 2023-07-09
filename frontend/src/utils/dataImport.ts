@@ -1,22 +1,24 @@
 import { ArcJson, ArcJsonActivity, ArcJsonVisit } from "./types";
 
+interface Sample {
+  date: string;
+  classifiedType: string;
+  location: {
+    speed: number;
+    latitude: number;
+    longitude: number;
+    timestamp: string;
+    altitude: number;
+  };
+}
+
 interface FeatureProperties {
   itemId: string;
   nextItemId?: string;
   previousItemId: string;
   isVisit: boolean;
   altitude: number;
-  samples: {
-    date: string;
-    classifiedType: string;
-    location: {
-      speed: number;
-      latitude: number;
-      longitude: number;
-      timestamp: string;
-      altitude: number;
-    };
-  }[];
+  samples: Sample[];
   startDate: string;
   endDate: string;
 }
@@ -115,79 +117,108 @@ export class GeoJson implements GeoJSON.FeatureCollection {
       timelineItem.center.latitude,
       timelineItem.altitude,
     ];
+    const samples: Sample[] = [];
+    timelineItem.samples.forEach((sample) => {
+      if (sample.location === null) return;
+      samples.push({
+        date: sample.date,
+        classifiedType: sample.classifiedType,
+        location: {
+          speed: sample.location.speed,
+          latitude: sample.location.latitude,
+          longitude: sample.location.longitude,
+          timestamp: sample.location.timestamp,
+          altitude: sample.location.altitude,
+        },
+      });
+    });
+    const {
+      itemId,
+      nextItemId,
+      previousItemId,
+      isVisit,
+      altitude,
+      startDate,
+      endDate,
+      radius,
+      center,
+      streetAddress,
+      place,
+      manualPlace,
+      placeId,
+    } = timelineItem;
     const props: VisitProperties = {
       // Common props
-      itemId: timelineItem.itemId,
-      nextItemId: timelineItem.nextItemId,
-      previousItemId: timelineItem.previousItemId,
-      isVisit: timelineItem.isVisit,
-      altitude: timelineItem.altitude,
-      samples: timelineItem.samples.map((sample) => {
-        return {
-          date: sample.date,
-          classifiedType: sample.classifiedType,
-          location: {
-            speed: sample.location.speed,
-            latitude: sample.location.latitude,
-            longitude: sample.location.longitude,
-            timestamp: sample.location.timestamp,
-            altitude: sample.location.altitude,
-          },
-          startDate: timelineItem.startDate,
-          endDate: timelineItem.endDate,
-        };
-      }),
-      startDate: timelineItem.startDate,
-      endDate: timelineItem.endDate,
+      itemId,
+      nextItemId,
+      previousItemId,
+      isVisit,
+      altitude,
+      samples: samples,
+      startDate,
+      endDate,
       // Visit props
-      radius: timelineItem.radius,
-      center: timelineItem.center,
-      streetAddress: timelineItem.streetAddress,
-      place: timelineItem.place,
-      manualPlace: timelineItem.manualPlace,
-      placeId: timelineItem.placeId,
+      radius,
+      center,
+      streetAddress,
+      place,
+      manualPlace,
+      placeId,
     };
     this.features.push(new Visit(coordinates, props));
   }
 
   addActivity(timelineItem: ArcJsonActivity) {
     const coordinates: [number, number, number][] = [];
+    const samples: Sample[] = [];
     timelineItem.samples.forEach((sample) => {
+      if (sample.location === null) return;
       coordinates.push([
         sample.location.longitude,
         sample.location.latitude,
         sample.location.altitude,
       ]);
+      samples.push({
+        date: sample.date,
+        classifiedType: sample.classifiedType,
+        location: {
+          speed: sample.location.speed,
+          latitude: sample.location.latitude,
+          longitude: sample.location.longitude,
+          timestamp: sample.location.timestamp,
+          altitude: sample.location.altitude,
+        },
+      });
     });
+
+    const {
+      itemId,
+      nextItemId,
+      previousItemId,
+      isVisit,
+      altitude,
+      startDate,
+      endDate,
+      uncertainActivityType,
+      manualActivityType,
+      activityType,
+      activityTypeConfidenceScore,
+    } = timelineItem;
     const props: ActivityProperties = {
       // Common props
-      itemId: timelineItem.itemId,
-      nextItemId: timelineItem.nextItemId,
-      previousItemId: timelineItem.previousItemId,
-      isVisit: timelineItem.isVisit,
-      altitude: timelineItem.altitude,
-      samples: timelineItem.samples.map((sample) => {
-        return {
-          date: sample.date,
-          classifiedType: sample.classifiedType,
-          location: {
-            speed: sample.location.speed,
-            latitude: sample.location.latitude,
-            longitude: sample.location.longitude,
-            timestamp: sample.location.timestamp,
-            altitude: sample.location.altitude,
-          },
-          startDate: timelineItem.startDate,
-          endDate: timelineItem.endDate,
-        };
-      }),
-      startDate: timelineItem.startDate,
-      endDate: timelineItem.endDate,
+      itemId,
+      nextItemId,
+      previousItemId,
+      isVisit,
+      altitude,
+      samples: samples,
+      startDate,
+      endDate,
       // Activity props
-      uncertainActivityType: timelineItem.uncertainActivityType,
-      manualActivityType: timelineItem.manualActivityType,
-      activityType: timelineItem.activityType,
-      activityTypeConfidenceScore: timelineItem.activityTypeConfidenceScore,
+      uncertainActivityType,
+      manualActivityType,
+      activityType,
+      activityTypeConfidenceScore,
     };
     this.features.push(new Activity(coordinates, props));
   }
