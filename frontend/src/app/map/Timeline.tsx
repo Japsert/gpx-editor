@@ -1,5 +1,9 @@
 import { Activity, GeoJson, Visit } from "@/utils/dataImport";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import {
+  IconDefinition,
+  faHouse,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface TimelineProps {
@@ -9,22 +13,31 @@ interface TimelineProps {
 export default function Timeline({ geoJson }: TimelineProps) {
   function createVisitHtml(visit: Visit) {
     // Format time
-    const time = new Date(visit.properties.time);
-    const timeString = `${time.getHours()}:${time.getMinutes()}`; // TODO: use Luxon to format time
+    const time = new Date(visit.properties.startDate);
+    const timeString = `${time.getHours()}:${time.getMinutes()}`;
 
-    const durationSeconds = 3661; // TODO: get duration from nextItem.time - time
-    const hours = Math.floor(durationSeconds / 3600);
+    // Format duration
+    const startDate = new Date(visit.properties.startDate);
+    const endDate = new Date(visit.properties.endDate);
+    const durationSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
+    const days = Math.floor(durationSeconds / 86400);
+    const hours = Math.floor((durationSeconds % 86400) / 3600);
     const minutes = Math.floor((durationSeconds % 3600) / 60);
     const seconds = Math.floor(durationSeconds % 60);
     const durationComponents: string[] = [];
-    if (hours > 0) {
+    if (days > 0) {
+      durationComponents.push(`${days}d`);
+      if (hours > 0) {
+        durationComponents.push(`${hours}h`);
+      }
+    } else if (hours > 0) {
       durationComponents.push(`${hours}h`);
       if (minutes > 0) {
         durationComponents.push(`${minutes}m`);
       }
     } else if (minutes > 0) {
       durationComponents.push(`${minutes}m`);
-      if (minutes < 3) {
+      if (minutes < 3 && seconds > 0) {
         durationComponents.push(`${seconds}s`);
       }
     } else {
@@ -32,19 +45,38 @@ export default function Timeline({ geoJson }: TimelineProps) {
     }
     const durationString = durationComponents.join(" ");
 
+    // Determine icon
+    function determineIcon() {
+      if (visit.properties.place?.isHome) return faHouse;
+      // other icons...
+      return faLocationDot;
+    }
+    const icon: IconDefinition = determineIcon();
+
+    // Determine name
+    function determineName() {
+      if (visit.properties.place?.isHome) return "Home";
+      if (visit.properties.place?.name) return visit.properties.place.name;
+      if (visit.properties.streetAddress) return visit.properties.streetAddress;
+      // other names...
+      return "Unnamed place";
+    }
+    const name: string = determineName();
+
     return (
       <tr key={visit.properties.itemId} className="flex items-center my-1">
-        <td className="flex flex-col w-12">
+        {/* TODO: The w-16 here is hardcoded */}
+        <td className="flex flex-col w-16">
           <span className="w-12">{timeString}</span>
           <span className="text-sm">{durationString}</span>
         </td>
 
         <td className="w-16 text-center">
-          <FontAwesomeIcon icon={faLocationDot} size="lg" />
+          <FontAwesomeIcon icon={icon} size="lg" />
         </td>
 
         <td>
-          <span className="font-medium">{visit.properties.streetAddress}</span>
+          <span className="font-medium">{name}</span>
         </td>
       </tr>
     );
@@ -52,21 +84,20 @@ export default function Timeline({ geoJson }: TimelineProps) {
 
   function createActivityHtml(activity: Activity) {
     const activityType = activity.properties.activityType;
-    let colorClass = "";
-    switch (activityType) {
-      case "walking":
-        colorClass = "bg-green-500";
-        break;
-      case "running":
-        colorClass = "bg-orange-500";
-        break;
-      case "cycling":
-        colorClass = "bg-sky-500";
-        break;
-      default:
-        colorClass = "bg-red-500";
-        break;
+    // Determine class associated with activity type
+    function determineActivityColor() {
+      switch (activityType) {
+        case "walking":
+          return "bg-green-500";
+        case "running":
+          return "bg-orange-500";
+        case "cycling":
+          return "bg-sky-500";
+        default:
+          return "bg-gray-500";
+      }
     }
+    const colorClass = determineActivityColor();
 
     // Format activity type
     const firstLetterUppercase = (str: string) =>
@@ -74,14 +105,12 @@ export default function Timeline({ geoJson }: TimelineProps) {
     const activityTypeString = firstLetterUppercase(activityType);
 
     // Format duration
-    const timestamps = activity.properties.timestamps;
-    const startDate = new Date(timestamps[0]);
-    const endDate = new Date(timestamps[timestamps.length - 1]);
-    const activityDurationSeconds =
-      (endDate.getTime() - startDate.getTime()) / 1000;
-    const hours = Math.floor(activityDurationSeconds / 3600);
-    const minutes = Math.floor((activityDurationSeconds % 3600) / 60);
-    const seconds = Math.floor(activityDurationSeconds % 60);
+    const startDate = new Date(activity.properties.startDate);
+    const endDate = new Date(activity.properties.endDate);
+    const durationSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.floor((durationSeconds % 3600) / 60);
+    const seconds = Math.floor(durationSeconds % 60);
     const durationComponents: string[] = [];
     if (hours > 0) {
       durationComponents.push(`${hours} hour${hours > 1 ? "s" : ""}`);
@@ -90,7 +119,7 @@ export default function Timeline({ geoJson }: TimelineProps) {
       }
     } else if (minutes > 0) {
       durationComponents.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
-      if (minutes < 3) {
+      if (minutes < 3 && seconds > 0) {
         durationComponents.push(`${seconds} second${seconds > 1 ? "s" : ""}`);
       }
     } else {
@@ -100,7 +129,8 @@ export default function Timeline({ geoJson }: TimelineProps) {
 
     return (
       <tr key={activity.properties.itemId} className="flex items-center my-1">
-        <td className="w-12"></td>
+        {/* TODO: The w-16 here is hardcoded */}
+        <td className="w-16"></td>
 
         <td className="w-16 text-center">
           <span
@@ -129,15 +159,16 @@ export default function Timeline({ geoJson }: TimelineProps) {
   return (
     <table className="h-full ml-4">
       <tbody>
-        {geoJson.features.map((feature) => {
-          const type = feature.properties?.type;
-          if (!type) return;
-          if (type === "visit") {
-            return createVisitHtml(feature as Visit);
-          } else {
-            return createActivityHtml(feature as Activity);
-          }
-        })}
+        {geoJson.features
+          .slice() // Create a copy of the array
+          .reverse() // Reverse the copy in place
+          .map((feature) => {
+            if (feature.properties?.isVisit) {
+              return createVisitHtml(feature as Visit);
+            } else {
+              return createActivityHtml(feature as Activity);
+            }
+          })}
       </tbody>
     </table>
   );
