@@ -1,3 +1,10 @@
+/**
+ * Base type for all timeline items.
+ * - If either `activeEnergyBurned` or `hkStepCount` is present, both will be present.
+ * - Sometimes, a sample will have no `zAcceleration`, `xyAcceleration`, `courseVariance`, or `stepHz`, the location
+ * will be `null`, and the recordingState will be `"off"`. This is probably a bug in the app, and the sample should be
+ * ignored.
+ */
 export interface ArcJsonTimelineItem {
   itemId: string;
   nextItemId?: string;
@@ -7,6 +14,7 @@ export interface ArcJsonTimelineItem {
   floorsAscended: number;
   floorsDescended: number;
   stepCount: number;
+  hkStepCount?: number;
   samples: {
     sampleId: string;
     timelineItemId: string;
@@ -25,10 +33,10 @@ export interface ArcJsonTimelineItem {
       timestamp: string;
       altitude: number;
     };
-    xyAcceleration: number;
-    zAcceleration: number;
-    courseVariance: number;
-    stepHz: number;
+    xyAcceleration?: number;
+    zAcceleration?: number;
+    courseVariance?: number;
+    stepHz?: number;
     lastSaved: string;
   }[];
   startDate: string;
@@ -36,6 +44,13 @@ export interface ArcJsonTimelineItem {
   lastSaved: string;
 }
 
+/**
+ * A visit. Includes all base timeline item properties.
+ * - If one of `place`, `manualPlace`, or `placeId` is present, all three will be present.
+ * - If either `averageHeartRate` or `maxHeartRate` is present, both will be present.
+ * - If `isHome` is present, it will be `true`.
+ * - If either `fourSquareVenueId` or `fourSquareCategoryId` is present, both will be present.
+ */
 export interface ArcJsonVisit extends ArcJsonTimelineItem {
   hkStepCount: number;
   radius: {
@@ -50,9 +65,6 @@ export interface ArcJsonVisit extends ArcJsonTimelineItem {
     latitude: number;
   };
   streetAddress: string;
-}
-
-export interface ArcJsonPlace extends ArcJsonVisit {
   placeId: string;
   place: {
     placeId: string;
@@ -73,13 +85,17 @@ export interface ArcJsonPlace extends ArcJsonVisit {
   manualPlace: boolean;
 }
 
+/**
+ * An activity. Includes all base timeline item properties.
+ */
 export interface ArcJsonActivity extends ArcJsonTimelineItem {
-  uncertainActivityType: string;
+  uncertainActivityType: boolean;
   manualActivityType: boolean;
   activityType: string;
   activityTypeConfidenceScore: number;
 }
 
-export type ArcJson = {
-  timelineItems: (ArcJsonVisit | ArcJsonPlace | ArcJsonActivity)[];
-};
+/** The JSON format of files exported from Arc. */
+export interface ArcJson {
+  timelineItems: (ArcJsonVisit | ArcJsonActivity)[];
+}

@@ -1,6 +1,6 @@
-# arcjson
+# arcjson types
 
-## common
+### common
 
 Notes:
 
@@ -43,13 +43,13 @@ Notes:
 - endDate
 - lastSaved
 
-## visit extends common
+### visit extends common
 
 Notes:
 
 - if one of place, manualPlace, or placeId is present, all three will be present
 - if either averageHeartRate or maxHeartRate is present, both will be present
-- if isHome is present, it is true
+- if isHome is present, it will be true
 - if either foursquareVenueId or foursquareCategoryId is present, both will be present
 
 - radius
@@ -77,7 +77,59 @@ Notes:
 - manualPlace?
 - placeId?
 
-## activity extends common
+### activity extends common
+
+- uncertainActivityType
+- manualActivityType
+- activityType
+- activityTypeConfidenceScore
+
+## what to keep
+
+### common
+
+- itemId
+- nextItemId?
+- previousItemId
+- isVisit
+- altitude
+- samples
+  - date
+  - classifiedType
+  - location
+    - speed
+    - longitude
+    - latitude
+    - timestamp
+    - altitude
+- startDate
+- endDate
+
+### visit
+
+- radius
+  - mean
+  - sd
+- center
+  - longitude
+  - latitude
+- streetAddress?
+- place?
+  - placeId
+  - isHome?: true
+  - name
+  - center
+    - longitude
+    - latitude
+  - radius
+    - mean
+    - sd
+  - foursquareVenueId?
+  - foursquareCategoryId?
+- manualPlace?
+- placeId?
+
+### activity
 
 - uncertainActivityType
 - manualActivityType

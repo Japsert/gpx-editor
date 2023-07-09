@@ -1,4 +1,4 @@
-import { Activity, GeoJson, Place, Visit } from "@/utils/dataImport";
+import { Activity, GeoJson, Visit } from "@/utils/dataImport";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -7,51 +7,6 @@ interface TimelineProps {
 }
 
 export default function Timeline({ geoJson }: TimelineProps) {
-  function createPlaceHtml(place: Place) {
-    // Format time
-    const time = new Date(place.properties.time);
-    const timeString = `${time.getHours()}:${time.getMinutes()}`; // TODO: use Luxon to format time
-
-    // Format duration
-    const durationSeconds = 3661; // TODO: get duration from nextItem.time - time
-    const hours = Math.floor(durationSeconds / 3600);
-    const minutes = Math.floor((durationSeconds % 3600) / 60);
-    const seconds = Math.floor(durationSeconds % 60);
-    const durationComponents: string[] = [];
-    if (hours > 0) {
-      durationComponents.push(`${hours}h`);
-      if (minutes > 0) {
-        durationComponents.push(`${minutes}m`);
-      }
-    } else if (minutes > 0) {
-      durationComponents.push(`${minutes}m`);
-      if (minutes < 3) {
-        durationComponents.push(`${seconds}s`);
-      }
-    } else {
-      durationComponents.push(`${seconds}s`);
-    }
-    const durationString = durationComponents.join(" ");
-
-    return (
-      <tr key={place.properties.itemId} className="flex items-center my-1">
-        <td className="flex flex-col w-12">
-          <span className="w-12">{timeString}</span>
-          <span className="text-sm">{durationString}</span>
-        </td>
-
-        <td className="w-16 text-center">
-          <FontAwesomeIcon icon={faLocationDot} size="lg" />
-        </td>
-
-        <td>
-          <span className="font-medium">{place.properties.name}</span>
-        </td>
-      </tr>
-    );
-  }
-
-  // TODO: merge visit with place?
   function createVisitHtml(visit: Visit) {
     // Format time
     const time = new Date(visit.properties.time);
@@ -177,15 +132,10 @@ export default function Timeline({ geoJson }: TimelineProps) {
         {geoJson.features.map((feature) => {
           const type = feature.properties?.type;
           if (!type) return;
-          switch (type) {
-            case "place":
-              return createPlaceHtml(feature as Place);
-
-            case "visit":
-              return createVisitHtml(feature as Visit);
-
-            case "activity":
-              return createActivityHtml(feature as Activity);
+          if (type === "visit") {
+            return createVisitHtml(feature as Visit);
+          } else {
+            return createActivityHtml(feature as Activity);
           }
         })}
       </tbody>
