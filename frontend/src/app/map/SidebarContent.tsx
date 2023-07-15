@@ -123,6 +123,7 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
           accept=".json"
           multiple
           onChange={(e) => processImportFiles(e)}
+          className="ml-4"
         />
       </form>
 
