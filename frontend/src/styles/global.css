@@ -35,4 +35,8 @@
   .btn-red {
     @apply btn text-white bg-red-600 hover:bg-red-700 active:bg-red-800;
   }
+
+  .login-input {
+    @apply border-b-2 h-8 mx-0 focus:border-lime-800 focus:outline-none transition focus:placeholder-gray-500 hover:shadow-[0_4px_10px_-10px_gray] focus:shadow-[0_4px_6px_-6px_gray];
+  }
 }

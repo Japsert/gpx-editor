@@ -22,6 +22,16 @@ export default function IndexPage() {
             /csstest
           </Link>
         </li>
+        <li>
+          <Link href="/account/login" className="link">
+            /account/login
+          </Link>
+        </li>
+        <li>
+          <Link href="/account/register" className="link">
+            /account/register
+          </Link>
+        </li>
       </ul>
     </div>
   );

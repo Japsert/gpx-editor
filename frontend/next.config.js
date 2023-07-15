@@ -11,6 +11,15 @@ const nextConfig = {
     return config;
   },
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/account",
+        destination: "/account/login",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
