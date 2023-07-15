@@ -7,7 +7,6 @@ const inter = Inter({ subsets: ["latin"] });
 // needed for typescript
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import SiteHeader from "./SiteHeader";
 config.autoAddCss = false;
 
 export default function RootLayout({
@@ -17,9 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full`}>
-        {children}
-      </body>
+      <body className={`${inter.className} h-full`}>{children}</body>
     </html>
   );
 }
