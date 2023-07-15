@@ -4,7 +4,7 @@ import styles from "./csstest.module.css";
 export default function CssTestPage() {
   return (
     <main className="text-content">
-      <h1>CSS test</h1>
+      <h1 className="text-2xl font-semibold mt-8 mb-2">CSS test</h1>
 
       <p>All the below text is styled with the global css file.</p>
 

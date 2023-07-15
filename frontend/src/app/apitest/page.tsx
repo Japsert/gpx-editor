@@ -51,7 +51,7 @@ export default function ApiTestPage() {
 
   return (
     <main className="text-content">
-      <h1>API test</h1>
+      <h1 className="text-2xl font-semibold mt-8 mb-2">API test</h1>
 
       <h2>Getting the first row</h2>
 
