@@ -11,7 +11,7 @@ import Link from "next/link";
 export default function SiteHeader() {
   return (
     // z-50 is needed to have a shadow on the map
-    <header className="shadow z-50"> 
+    <header className="shadow z-50 bg-white">
       <nav className="flex justify-center items-center relative h-16 mx-8">
         {/* Main logo and title */}
         <Link href="/" className="flex gap-2">
@@ -24,7 +24,7 @@ export default function SiteHeader() {
         {/* Navigation links */}
         <div className="absolute right-0 gap-6 items-center hidden md:flex">
           <div className="">
-            <Link href="/login" className="flex gap-2 items-center">
+            <Link href="/account" className="flex gap-2 items-center">
               <FontAwesomeIcon icon={faUser} />
               <span className="header-link">Account</span>
             </Link>
