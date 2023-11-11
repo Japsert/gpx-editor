@@ -7,6 +7,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import Timeline from "./Timeline";
+import axios from "axios";
+
+const DATA_API_URL = process.env.NEXT_PUBLIC_DATA_API_URL;
+if (!DATA_API_URL) console.error("DATA_API_URL not set");
 
 interface SidebarContentProps {
   dataArtist?: DataArtist;
@@ -25,56 +29,101 @@ class GeoJsonMap extends Map<Date, GeoJson> {
   }
 }
 
+interface GeoJsonEntry {
+  id: number;
+  date: string;
+  data: GeoJson;
+}
+
 export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   const [data, setData] = useState<GeoJsonMap>(new GeoJsonMap());
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   useEffect(() => {
+    drawGeoJsonByDates([currentDate]);
+  }, [currentDate, dataArtist]);
+
+  function drawGeoJsonByDates(dates: Date[]) {
     if (!dataArtist) return;
-    const geoJson = data.get(currentDate);
-    if (!geoJson) {
-      dataArtist.clear();
-    } else {
-      dataArtist.clear();
-      dataArtist.draw(currentDate, geoJson);
-    }
-  }, [currentDate, data, dataArtist]);
+    // get data of this date from backend
+    const datesString = dates
+      .map((date) => date.toISOString().split("T")[0])
+      .join(",");
+    axios
+      .get(DATA_API_URL!, {
+        params: {
+          dates: datesString,
+        },
+      })
+      .then((response) => {
+        const geoJsonMap = new GeoJsonMap();
+        for (const entry of response.data as GeoJsonEntry[]) {
+          const date = new Date(entry.date);
+          const data = entry.data;
+          geoJsonMap.set(new Date(date), data);
+        }
+        setData(geoJsonMap);
+
+        // draw data on map
+        if (geoJsonMap.size === 0) {
+          dataArtist.clear();
+        } else {
+          dataArtist.clear();
+          geoJsonMap.forEach((geoJson, date) => {
+            dataArtist.draw(date, geoJson);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting data from backend:", error.response);
+      });
+  }
+
+  function drawAllData(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault();
+    // get all available dates from backend
+    axios.get(DATA_API_URL!).then((response) => {
+      const dates = response.data as string[];
+      drawGeoJsonByDates(dates.map((date) => new Date(date)));
+    });
+  }
 
   function processImportFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
 
-    const startTime = new Date().getTime();
-
     // Loop over selected files, convert to geojson, and import
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
       // file is named like 2023-07-05.json
-      const date = new Date(file.name.split(".")[0]);
+      const date = file.name.split(".")[0];
 
       const reader = new FileReader();
       reader.onload = async (e) => {
-        if (!e.target) return;
-        if (!e.target.result) return;
-        const contents = e.target.result as string;
-        const geoJson = arcJsonToGeoJson(contents);
-        if (!geoJson) return;
-        setData((prev) => {
-          const next = new GeoJsonMap(prev);
-          next.set(date, geoJson);
-          return next;
-        });
+        if (!e.target || !e.target.result) return;
+        const fileContents = e.target.result as string;
+        // convert to geojson
+        const data = arcJsonToGeoJson(fileContents);
+        // send to backend
+        axios
+          .post(DATA_API_URL!, {
+            date,
+            data,
+          })
+          .then((response) => {
+            console.debug("Uploaded data to backend.", response);
+          })
+          .catch((error) => {
+            const status = error.response?.status;
+            if (status === 409) {
+              console.error("Data already exists:", date);
+            } else {
+              console.error("Error uploading data to backend:", error.response);
+            }
+          });
       };
       reader.readAsText(file);
-    }
-
-    const endTime = new Date().getTime();
-    const timeTakenMs = endTime - startTime;
-    if (timeTakenMs > 1) {
-      alert(
-        `Importing ${selectedFiles.length} files took ${timeTakenMs}ms. Consider changing the setData call in the processImportFiles function to not create a new GeoJsonMap each time. (check commit after 6eebd2c on 2023-7-7)`
-      );
     }
   }
 
@@ -126,6 +175,10 @@ export default function SidebarContent({ dataArtist }: SidebarContentProps) {
           className="ml-4"
         />
       </form>
+
+      <button type="button" className="border m-2" onClick={drawAllData}>
+        Draw all data
+      </button>
 
       <hr className="my-2" />
 
