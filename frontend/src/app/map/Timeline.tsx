@@ -14,7 +14,9 @@ export default function Timeline({ geoJson }: TimelineProps) {
   function createVisitHtml(visit: Visit) {
     // Format time
     const time = new Date(visit.properties.startDate);
-    const timeString = `${time.getHours()}:${time.getMinutes()}`;
+    const timeStringHours = time.getHours().toString().padStart(2, "0");
+    const timeStringMinutes = time.getMinutes().toString().padStart(2, "0");
+    const timeString = `${timeStringHours}:${timeStringMinutes}`;
 
     // Format duration
     const startDate = new Date(visit.properties.startDate);
