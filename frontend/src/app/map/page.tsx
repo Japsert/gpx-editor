@@ -7,7 +7,7 @@ import Sidebar from "./Sidebar";
 export default function MapPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [map, setMap] = useState<mapboxgl.Map | undefined>(undefined);
-  // The data artist is created by the MapComponent and passed to the Sidebar so
+  // The data artist is created and set by the MapComponent and passed to the Sidebar so
   // that we can draw data on the map from the sidebar.
   const [dataArtist, setDataArtist] = useState<DataArtist | undefined>(
     undefined

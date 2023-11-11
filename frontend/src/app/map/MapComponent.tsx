@@ -3,11 +3,11 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 
-let accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-if (!accessToken) {
+const ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+if (!ACCESS_TOKEN) {
   throw new Error("No access token for Mapbox");
 }
-mapboxgl.accessToken = accessToken;
+mapboxgl.accessToken = ACCESS_TOKEN;
 
 interface MapComponentProps {
   setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | undefined>>;
