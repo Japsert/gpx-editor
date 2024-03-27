@@ -11,6 +11,7 @@ import axios from "axios";
 
 const DATA_API_URL = process.env.NEXT_PUBLIC_DATA_API_URL;
 if (!DATA_API_URL) console.error("DATA_API_URL not set");
+const INITIAL_DATE = new Date("2023-11-11");
 
 interface SidebarContentProps {
   dataArtist?: DataArtist;
@@ -37,7 +38,7 @@ interface GeoJsonEntry {
 
 export default function SidebarContent({ dataArtist }: SidebarContentProps) {
   const [data, setData] = useState<GeoJsonMap>(new GeoJsonMap());
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(INITIAL_DATE);
 
   useEffect(() => {
     drawGeoJsonByDates([currentDate]);
